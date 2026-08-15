@@ -1,0 +1,11 @@
+{
+  "name": "margin-wellness",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/core.test.mjs",
+    "check": "node --check app.js && node --check core.js && node tests/core.test.mjs",
+    "format": "npx prettier --write index.html styles.css app.js core.js sw.js tests.html browser-tests.js"
+  }
+}

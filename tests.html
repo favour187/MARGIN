@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MARGIN model self-check</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: system-ui, sans-serif;
+      }
+      body {
+        margin: 0;
+        background: #f3f0e8;
+        color: #18201d;
+      }
+      main {
+        max-width: 760px;
+        margin: auto;
+        padding: 64px 20px;
+      }
+      .eyebrow {
+        color: #176a50;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        font-size: 11px;
+      }
+      h1 {
+        font-size: clamp(42px, 8vw, 72px);
+        letter-spacing: -0.065em;
+        line-height: 0.96;
+        margin: 12px 0;
+      }
+      .lead {
+        color: #67706b;
+        font-size: 17px;
+      }
+      #score {
+        display: inline-block;
+        margin: 20px 0;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: #18201d;
+        color: #d8f36a;
+        font-weight: 850;
+      }
+      ol {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 9px;
+      }
+      li {
+        padding: 15px;
+        border: 1px solid #d7d7cd;
+        border-radius: 14px;
+        background: #fbfaf5;
+      }
+      .pass {
+        border-left: 5px solid #176a50;
+      }
+      .fail {
+        border-left: 5px solid #f07c64;
+      }
+      a {
+        color: #176a50;
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">MARGIN · PRODUCT TRUST</p>
+      <h1>Model self-check</h1>
+      <p class="lead">
+        These checks run the same capacity, rescue and deadline-planning
+        functions used by the application.
+      </p>
+      <strong id="score">Running checks…</strong>
+      <ol id="results"></ol>
+      <p><a href="./">← Return to MARGIN</a></p>
+    </main>
+    <script type="module" src="browser-tests.js"></script>
+  </body>
+</html>

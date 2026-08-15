@@ -1,258 +1,968 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#f3f0e8">
-  <meta name="description" content="MARGIN helps students see overload before burnout and redesign a safer week.">
-  <title>MARGIN — Make room before burnout</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="topbar">
-    <button class="brand" data-view="today" aria-label="MARGIN home"><span class="brand-mark">M</span><span>MARGIN</span></button>
-    <div class="top-actions"><button id="calmNowBtn" class="calm-now-btn">Calm now</button><button id="accessBtn" class="round-btn" aria-label="Accessibility settings">Aa</button><button id="menuBtn" class="menu-btn" aria-label="Open menu" aria-expanded="false">☰</button></div>
-  </header>
-  <div id="menuScrim" class="menu-scrim" hidden></div>
-  <aside id="menuDrawer" class="menu-drawer" hidden aria-label="MARGIN menu">
-    <div class="drawer-head"><div><span class="brand-mark">M</span><strong>MARGIN</strong></div><button id="closeMenu" aria-label="Close menu">×</button></div>
-    <p class="drawer-label">PLAN</p>
-    <button class="drawer-link active" data-view="today"><span>01</span><div><strong>Today</strong><small>Your capacity and one next thing</small></div></button>
-    <button class="drawer-link" data-view="tasks"><span>02</span><div><strong>Task Inbox</strong><small>Deadlines and safe scheduling</small></div></button>
-    <button class="drawer-link" data-view="week"><span>03</span><div><strong>Week Lab</strong><small>Scenarios and calendar tools</small></div></button>
-    <p class="drawer-label">RECOVER & SHARE</p>
-    <button class="drawer-link" data-view="reset"><span>04</span><div><strong>Reset Lab</strong><small>Adaptive local recommendations</small></div></button>
-    <button class="drawer-link" data-view="support"><span>05</span><div><strong>Support & transfer</strong><small>Cards, resources and encrypted move</small></div></button>
-    <button class="drawer-link" data-view="how"><span>06</span><div><strong>How MARGIN works</strong><small>Formula, privacy and limitations</small></div></button>
-    <footer><span>Offline-first</span><span>No account</span><span>No diagnosis</span></footer>
-  </aside>
-
-  <main id="main">
-    <section id="todayView" class="view active">
-      <div class="hero shell">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f3f0e8" />
+    <meta
+      name="description"
+      content="MARGIN helps students see overload before burnout and redesign a safer week."
+    />
+    <title>MARGIN — Make room before burnout</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="topbar">
+      <button class="brand" data-view="today" aria-label="MARGIN home">
+        <span class="brand-mark">M</span><span>MARGIN</span>
+      </button>
+      <div class="top-actions">
+        <button id="calmNowBtn" class="calm-now-btn">Calm now</button
+        ><button
+          id="accessBtn"
+          class="round-btn"
+          aria-label="Accessibility settings"
+        >
+          Aa</button
+        ><button
+          id="menuBtn"
+          class="menu-btn"
+          aria-label="Open menu"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+      </div>
+    </header>
+    <div id="menuScrim" class="menu-scrim" hidden></div>
+    <aside id="menuDrawer" class="menu-drawer" hidden aria-label="MARGIN menu">
+      <div class="drawer-head">
+        <div><span class="brand-mark">M</span><strong>MARGIN</strong></div>
+        <button id="closeMenu" aria-label="Close menu">×</button>
+      </div>
+      <p class="drawer-label">PLAN</p>
+      <button class="drawer-link active" data-view="today">
+        <span>01</span>
         <div>
-          <p class="eyebrow">Private capacity planning for student life</p>
-          <h1>Make room<br>before <em>burnout.</em></h1>
-          <p class="hero-copy">MARGIN turns classes, work, commuting, care duties, sleep and recovery into one honest picture of what your week can hold.</p>
-          <div class="assurances"><span>No account</span><span>Works offline</span><span>Never diagnoses</span></div>
+          <strong>Today</strong><small>Your capacity and one next thing</small>
         </div>
-        <div class="margin-orbit" aria-hidden="true"><div><strong id="heroMargin">—</strong><span>hours of weekly margin</span></div><i></i><i></i><i></i></div>
-      </div>
-
-      <div class="dashboard shell">
-        <section class="one-thing-card card" aria-labelledby="oneThingHeading">
-          <div><p class="step">YOUR ONE THING</p><h2 id="oneThingHeading">One useful action, not the whole list.</h2><div id="oneThing"></div></div>
-          <button class="secondary-btn" data-go="tasks">Open Task Inbox</button>
-        </section>
-        <section id="shockCard" class="shock-card card" aria-labelledby="shockHeading"><p class="step">DEADLINE RADAR</p><h2 id="shockHeading">No deadline shocks detected.</h2><div id="shockSummary"></div></section>
-        <section class="week-card card" aria-labelledby="weekHeading">
-          <div class="card-head"><div><p class="step">01 · CAPACITY MAP</p><h2 id="weekHeading">Your week, honestly.</h2></div><button id="demoBtn" class="quiet-btn">Load demo week</button></div>
-          <div id="weekRibbon" class="week-ribbon"></div>
-          <div id="weekSummary" class="week-summary"></div>
-        </section>
-
-        <section class="checkin-card card" aria-labelledby="checkinHeading">
-          <div class="card-head"><div><p class="step">02 · TWO-MINUTE CHECK-IN</p><h2 id="checkinHeading">How much fuel is left?</h2></div><span id="checkinSaved" class="saved-note"></span></div>
-          <button id="voiceCheckin" class="voice-btn"><span aria-hidden="true">◉</span><span><strong>Speak your check-in</strong><small>Try: “I slept six hours, energy low, stress high.”</small></span></button>
-          <p id="voiceStatus" class="voice-status" aria-live="polite"></p>
-          <label>Energy right now <strong id="energyValue">3 / 5</strong></label>
-          <input id="energyRange" type="range" min="1" max="5" value="3">
-          <div class="range-labels"><span>Empty</span><span>Steady</span><span>Full</span></div>
-          <label>Stress right now <strong id="stressValue">3 / 5</strong></label>
-          <input id="stressRange" type="range" min="1" max="5" value="3">
-          <div class="range-labels"><span>Calm</span><span>Stretched</span><span>Flooded</span></div>
-          <button id="saveCheckin" class="primary-btn">Save check-in <span>→</span></button>
-        </section>
-
-        <section class="insight-card card" aria-labelledby="insightHeading">
-          <p class="step">03 · PLAIN-LANGUAGE INSIGHT</p><h2 id="insightHeading">What MARGIN noticed</h2>
-          <div id="mainInsight" class="main-insight"></div>
-          <div class="inline-actions"><button id="readInsight" class="secondary-btn">Read this aloud</button><button class="text-link" data-go="week">Open Week Lab →</button></div>
-        </section>
-
-        <section class="today-card card" aria-labelledby="todayHeading">
-          <div class="card-head"><div><p class="step">TODAY</p><h2 id="todayHeading">A plan your body can afford.</h2></div><span id="todayState" class="state-pill"></span></div>
-          <div id="todayPlan" class="today-plan"></div>
-          <button class="secondary-btn" data-go="reset">Find a reset that fits today</button>
-        </section>
-
-        <section class="trend-card card" aria-labelledby="trendHeading">
-          <div class="card-head"><div><p class="step">SEVEN-DAY SIGNALS</p><h2 id="trendHeading">Patterns, not judgments.</h2></div><span class="no-streak">No streaks</span></div>
-          <div id="trendChart" class="trend-chart" role="img" aria-label="Seven-day energy, stress and sleep trends"></div>
-          <div id="trendInsight" class="trend-insight"></div>
-        </section>
-
-        <section class="wins-card card" aria-labelledby="winsHeading">
-          <p class="step">RECOVERY FOOTPRINTS</p><h2 id="winsHeading">What helped counts.</h2>
-          <div id="footprints" class="footprints" aria-label="Helpful reset history"></div>
-          <strong id="winsCount" class="wins-count">0 helpful moments</strong>
-          <p>MARGIN celebrates useful feedback, not perfect streaks. Missed days never erase progress.</p>
-          <button class="text-link" data-go="reset">Teach the local learner →</button>
-        </section>
-      </div>
-    </section>
-
-    <section id="tasksView" class="view shell" hidden>
-      <div class="page-title"><p class="eyebrow">Deadlines without all-nighters</p><h1>Real tasks.<br>A week that <em>fits.</em></h1><p>Add named work with honest estimates. MARGIN schedules before deadlines using available capacity—not imaginary perfect days.</p></div>
-      <div class="task-layout">
-        <section class="card task-entry">
-          <p class="step">ADD A TASK</p><h2>What needs doing?</h2>
-          <label>Task name<input id="taskName" placeholder="Example: Biology lab report"></label>
-          <div class="task-form-grid"><label>Due date<input id="taskDue" type="date"></label><label>Estimated hours<input id="taskHours" type="number" min="0.5" max="40" step="0.5" value="2"></label></div>
-          <div class="task-form-grid"><label>Priority<select id="taskPriority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label><label>Smallest session<select id="taskSession"><option value="0.5">30 minutes</option><option value="1">1 hour</option><option value="1.5">90 minutes</option></select></label></div>
-          <label class="toggle-row"><input id="taskSplit" type="checkbox" checked><span>This task can be split across days</span></label>
-          <button id="addTask" class="primary-btn">Add to inbox <span>＋</span></button>
-          <div class="import-box"><p class="step">BULK IMPORT</p><p>Use CSV columns: <code>name,due,hours,priority,splittable</code>, or paste one task per line using vertical bars.</p><label class="file-btn" for="taskFile">Import CSV or TXT</label><input id="taskFile" class="visually-hidden" type="file" accept=".csv,.txt,text/csv,text/plain"><textarea id="taskPaste" rows="4" placeholder="Chemistry quiz | 2026-08-18 | 2 | high | yes"></textarea><button id="parseTasks" class="quiet-btn">Parse pasted tasks</button><p id="taskImportStatus" class="calendar-status"></p></div>
-        </section>
-        <section class="card task-inbox">
-          <div class="card-head"><div><p class="step">TASK INBOX</p><h2 id="taskCount">0 open tasks</h2></div><button id="notifyBtn" class="quiet-btn">Enable alerts</button></div>
-          <div id="taskList" class="task-list"></div>
-          <button id="scheduleTasks" class="primary-btn">Build a deadline-safe plan <span>→</span></button>
-          <div id="scheduleReport" class="schedule-report" hidden></div>
-          <button id="applyTaskPlan" class="secondary-btn" hidden>Apply task plan to Capacity Map</button>
-        </section>
-      </div>
-    </section>
-
-    <section id="weekView" class="view shell" hidden>
-      <div class="page-title"><p class="eyebrow">Scenario planning, not guilt</p><h1>What if this week<br>asked <em>less?</em></h1><p>Adjust one day and see the effect before changing your real plan.</p></div>
-      <div class="week-lab-grid">
-        <section class="card controls-card">
-          <div class="card-head"><div><p class="step">SELECT A DAY</p><h2>Build the scenario</h2></div><button id="resetScenario" class="quiet-btn">Reset</button></div>
-          <div class="calendar-tools">
-            <label class="file-btn" for="calendarImport">Import calendar (.ics)</label><input id="calendarImport" class="visually-hidden" type="file" accept=".ics,text/calendar">
-            <button id="exportCalendar" class="quiet-btn">Export safer week</button>
-          </div>
-          <p id="calendarStatus" class="calendar-status" aria-live="polite"></p>
-          <div id="dayPicker" class="day-picker"></div>
-          <div class="control-group"><label for="sleepInput">Sleep <strong id="sleepOut"></strong></label><input id="sleepInput" type="range" min="3" max="10" step="0.5"></div>
-          <div class="control-group"><label for="fixedInput">Classes + fixed work <strong id="fixedOut"></strong></label><input id="fixedInput" type="range" min="0" max="14" step="0.5"></div>
-          <div class="control-group"><label for="flexInput">Assignments + flexible tasks <strong id="flexOut"></strong></label><input id="flexInput" type="range" min="0" max="14" step="0.5"></div>
-          <div class="control-group"><label for="careInput">Care duties <strong id="careOut"></strong></label><input id="careInput" type="range" min="0" max="8" step="0.5"></div>
-          <div class="control-group"><label for="commuteInput">Commute <strong id="commuteOut"></strong></label><input id="commuteInput" type="range" min="0" max="6" step="0.5"></div>
-          <button id="saveScenario" class="primary-btn">Use this safer plan <span>✓</span></button>
-        </section>
-        <section class="card comparison-card">
-          <p class="step">BEFORE / AFTER</p><h2 id="scenarioTitle">Your capacity changes live.</h2>
-          <div class="comparison-bars"><div><span>Original margin</span><div class="track"><i id="beforeBar"></i></div><strong id="beforeValue"></strong></div><div><span>Scenario margin</span><div class="track"><i id="afterBar"></i></div><strong id="afterValue"></strong></div></div>
-          <div id="scenarioVerdict" class="scenario-verdict"></div>
-          <div class="explain-box"><h3>Why this changed</h3><div id="scenarioWhy"></div></div>
-          <div class="suggestions"><h3>Smallest useful moves</h3><div id="moveSuggestions"></div></div>
-          <div class="rescue-box">
-            <div><p class="step">LOCAL SCHEDULE OPTIMIZER</p><h3>Rescue the whole week</h3><p>Move flexible work away from redline days while protecting sleep, care duties and a recovery reserve.</p></div>
-            <button id="rescueWeek" class="primary-btn">Find a safer distribution <span>↗</span></button>
-            <div id="rescueReport" class="rescue-report" hidden></div>
-            <button id="applyRescue" class="secondary-btn" hidden>Apply rescued week</button>
-          </div>
-        </section>
-      </div>
-    </section>
-
-    <section id="resetView" class="view shell" hidden>
-      <div class="page-title"><p class="eyebrow">On-device adaptive recommendations</p><h1>A reset that fits<br>the moment <em>you have.</em></h1><p>No generic wellness list. MARGIN learns only from your explicit feedback, and all learning stays on this device.</p></div>
-      <div class="reset-grid">
-        <section class="card reset-controls">
-          <p class="step">YOUR CONTEXT</p><h2>What is possible right now?</h2>
-          <label>Time available</label><div id="timeChoices" class="choice-row"><button data-minutes="2">2 min</button><button data-minutes="5" class="active">5 min</button><button data-minutes="10">10 min</button><button data-minutes="20">20 min</button></div>
-          <label>Energy</label><div id="resetEnergy" class="choice-row"><button data-energy="low">Low</button><button data-energy="medium" class="active">Medium</button><button data-energy="high">High</button></div>
-          <label>Where are you?</label><div id="placeChoices" class="choice-row wrap"><button data-place="public" class="active">Around people</button><button data-place="private">Some privacy</button><button data-place="outside">Outside</button></div>
-          <label class="toggle-row"><input id="quietOnly" type="checkbox"><span>Needs to be silent</span></label>
-          <button id="findReset" class="primary-btn">Find my best-fit reset <span>→</span></button>
-        </section>
-        <section class="card recommendation-card">
-          <div class="rec-top"><p class="step">MARGIN RECOMMENDS</p><span id="learningBadge">Local learner</span></div>
-          <div id="recommendation" class="recommendation empty-rec"><span class="rec-icon">✦</span><h2>Tell MARGIN what is possible.</h2><p>Your recommendation and the reason behind it will appear here.</p></div>
-          <div id="timerBox" class="timer-box" hidden><strong id="timerDisplay">05:00</strong><button id="timerBtn" class="secondary-btn">Start</button></div>
-          <div id="feedbackBox" class="feedback" hidden><p>Did this help even a little?</p><button data-feedback="yes">Yes, keep learning</button><button data-feedback="no">Not this time</button></div>
-          <details class="model-details"><summary>How the local learner decides</summary><p>MARGIN scores context fit, available time, accessibility and your previous “helped / did not help” feedback. It adds a repetition penalty so one action does not dominate. It does not infer a diagnosis or read private messages.</p></details>
-        </section>
-      </div>
-    </section>
-
-    <section id="supportView" class="view shell" hidden>
-      <div class="page-title"><p class="eyebrow">Ask for help without over-explaining</p><h1>Your support needs,<br>in <em>your words.</em></h1><p>Create a small card for a friend, teacher, roommate or family member. Nothing is uploaded.</p></div>
-      <div class="support-grid">
-        <section class="card support-form">
-          <p class="step">BUILD YOUR CARD</p><h2>What should someone know?</h2>
-          <label for="supportName">Name or nickname <span>optional</span></label><input id="supportName" placeholder="How should they address you?">
-          <label for="overloadSigns">When I’m overloaded, you might notice…</label><textarea id="overloadSigns" rows="3" placeholder="I go quiet, miss messages, or struggle to decide what to do first."></textarea>
-          <label for="helpfulActions">What helps me most is…</label><textarea id="helpfulActions" rows="3" placeholder="Help me choose one next step, bring water, or sit with me quietly."></textarea>
-          <label for="avoidActions">Please avoid…</label><textarea id="avoidActions" rows="3" placeholder="Giving me five solutions at once or telling me to calm down."></textarea>
-          <div class="support-actions"><button id="updateCard" class="primary-btn">Update card <span>→</span></button><button id="clearSupport" class="quiet-btn">Clear</button></div>
-        </section>
-        <section class="card preview-wrap">
-          <p class="step">PRIVATE PREVIEW</p>
-          <article id="supportPreview" class="support-preview">
-            <span class="preview-mark">M</span><p class="preview-label">HOW TO SUPPORT ME</p><h2 id="previewName">A small guide for a hard moment</h2>
-            <div><span>You may notice</span><p id="previewSigns">I may have less capacity than usual.</p></div>
-            <div><span>What helps</span><p id="previewHelp">Ask what kind of support I want.</p></div>
-            <div><span>Please avoid</span><p id="previewAvoid">Assuming silence means I do not care.</p></div>
-            <footer>This card shares preferences, not a diagnosis.</footer>
-          </article>
-          <div class="preview-actions"><button id="copyCard" class="secondary-btn">Copy text</button><button id="downloadCard" class="secondary-btn">Download image</button><button id="printCard" class="secondary-btn">Print / PDF</button></div>
-        </section>
-      </div>
-      <div class="sharing-grid">
-        <section class="availability-card card"><p class="step">SHARE ONLY AVAILABILITY</p><h2>Coordinate without sharing wellness data.</h2><p>Export green and thin-margin study periods. Energy, stress, sleep and check-ins stay private.</p><textarea id="availabilityOutput" rows="6" readonly></textarea><div class="boundary-actions"><button id="makeAvailability" class="secondary-btn">Create availability</button><button id="copyAvailability" class="secondary-btn">Copy</button></div></section>
-        <section class="transfer-card card"><p class="step">ENCRYPTED DEVICE TRANSFER</p><h2>Move MARGIN without an account.</h2><p>Protect an export with a passphrase, then import it on another device. The passphrase is never stored.</p><input id="transferPass" type="password" placeholder="Create or enter a passphrase"><div class="boundary-actions"><button id="encryptExport" class="secondary-btn">Export encrypted</button><label class="file-btn" for="encryptedImport">Import encrypted</label><input id="encryptedImport" class="visually-hidden" type="file" accept=".margin,application/json"></div><p id="transferStatus" class="calendar-status"></p></section>
-      </div>
-      <section class="campus-pack card"><div><p class="step">CAMPUS MODE</p><h2>Carry verified local resources offline.</h2><p>Import a JSON resource pack from a school or community. MARGIN never treats an unverified pack as official.</p></div><div class="campus-actions"><label class="file-btn" for="resourcePackImport">Import resource pack</label><input id="resourcePackImport" class="visually-hidden" type="file" accept=".json,application/json"><button id="exportResourcePack" class="secondary-btn">Export my pack</button></div><div id="campusResources" class="campus-resources"></div></section>
-      <section class="boundary-card card">
-        <div><p class="step">ADVOCATE WITHOUT OVER-EXPLAINING</p><h2>Ask for flexibility clearly.</h2><p>Create a respectful message that describes a capacity conflict without inventing a diagnosis or sharing private details.</p></div>
-        <div class="boundary-form">
-          <label>Who is it for?<select id="boundaryAudience"><option value="lecturer">Lecturer or teacher</option><option value="manager">Manager or supervisor</option><option value="team">Project team</option></select></label>
-          <label>What do you need?<select id="boundaryRequest"><option value="extension">A short deadline extension</option><option value="scope">A smaller scope</option><option value="meeting">A meeting to reprioritize</option><option value="shift">A schedule or shift change</option></select></label>
-          <label>New date or alternative <input id="boundaryDate" placeholder="Example: Monday, or 48 extra hours"></label>
-          <button id="generateBoundary" class="primary-btn">Generate a respectful draft <span>→</span></button>
+      </button>
+      <button class="drawer-link" data-view="tasks">
+        <span>02</span>
+        <div>
+          <strong>Task Inbox</strong
+          ><small>Deadlines and safe scheduling</small>
         </div>
-        <textarea id="boundaryOutput" rows="7" readonly placeholder="Your editable draft will appear here."></textarea>
-        <div class="boundary-actions"><button id="copyBoundary" class="secondary-btn">Copy draft</button><span>Review and personalize before sending.</span></div>
-      </section>
-      <section class="resource-card card">
-        <div><p class="step">HUMAN SUPPORT</p><h2>Technology should know when to step aside.</h2><p>MARGIN is not therapy or emergency care. Save one trusted person or campus resource so human help is easier to reach.</p></div>
-        <div class="resource-fields"><input id="resourceName" placeholder="Trusted person or campus service"><input id="resourceContact" placeholder="Phone, room, email, or link"><button id="saveResource" class="secondary-btn">Save locally</button></div>
-        <div id="savedResource" class="saved-resource"></div>
-        <p class="safety-note"><strong>If you may act on thoughts of harming yourself or someone else:</strong> contact local emergency services now, go to the nearest emergency department, or tell a trusted person who can stay with you. Do not rely on this app.</p>
-      </section>
-      <section class="privacy-card card">
-        <div><p class="step">YOUR DATA</p><h2>Local means yours.</h2><p>MARGIN saves this week, check-ins and recommendation feedback only in this browser.</p></div>
-        <div><button id="exportData" class="secondary-btn">Export my data</button><button id="deleteData" class="danger-btn">Delete everything</button></div>
-      </section>
-    </section>
+      </button>
+      <button class="drawer-link" data-view="week">
+        <span>03</span>
+        <div>
+          <strong>Week Lab</strong><small>Scenarios and calendar tools</small>
+        </div>
+      </button>
+      <p class="drawer-label">RECOVER & SHARE</p>
+      <button class="drawer-link" data-view="reset">
+        <span>04</span>
+        <div>
+          <strong>Reset Lab</strong
+          ><small>Adaptive local recommendations</small>
+        </div>
+      </button>
+      <button class="drawer-link" data-view="support">
+        <span>05</span>
+        <div>
+          <strong>Support & transfer</strong
+          ><small>Cards, resources and encrypted move</small>
+        </div>
+      </button>
+      <button class="drawer-link" data-view="how">
+        <span>06</span>
+        <div>
+          <strong>How MARGIN works</strong
+          ><small>Formula, privacy and limitations</small>
+        </div>
+      </button>
+      <button id="tourBtn" class="drawer-link">
+        <span>?</span>
+        <div>
+          <strong>Take the 60-second tour</strong>
+          <small>Learn the core loop without reading everything</small>
+        </div>
+      </button>
+      <footer>
+        <span>Offline-first</span><span>No account</span
+        ><span>No diagnosis</span>
+      </footer>
+    </aside>
 
-    <section id="howView" class="view shell" hidden>
-      <div class="page-title"><p class="eyebrow">Transparent by design</p><h1>No mystery score.<br>No fake <em>therapist.</em></h1><p>MARGIN explains every calculation, what it stores and where its limits begin.</p></div>
-      <div class="how-grid">
-        <section class="card"><p class="step">CAPACITY FORMULA</p><h2>What can this day honestly hold?</h2><div class="formula"><strong>Available capacity</strong><span>= waking time − fixed commitments − care − commute − recovery reserve</span><strong>Flexible demand</strong><span>= estimated task time × explainable friction factor</span><strong>Capacity debt</strong><span>= demand beyond available capacity</span></div></section>
-        <section class="card"><p class="step">LOCAL LEARNING</p><h2>Feedback, not surveillance.</h2><p>The Reset Engine uses a small contextual-bandit score. It considers time, energy, place, silence needs and explicit “helped / did not help” feedback. It does not read messages, infer diagnoses or upload behavior.</p></section>
-        <section class="card"><p class="step">BOUNDARIES</p><h2>What MARGIN cannot know.</h2><ul><li>It cannot diagnose or predict a mental-health condition.</li><li>It cannot know whether an estimate or deadline is accurate.</li><li>It cannot replace emergency, medical or counseling support.</li><li>Imported files must be reviewed by the user.</li></ul></section>
-        <section class="card"><p class="step">DATA MAP</p><h2>Stored only in this browser.</h2><div class="data-list"><span>Week and tasks</span><span>Check-ins</span><span>Reset feedback</span><span>Support preferences</span><span>Imported resource packs</span></div><p>Optional encrypted transfer is created only when requested.</p></section>
+    <main id="main">
+      <section id="todayView" class="view active">
+        <div class="hero shell">
+          <div>
+            <p class="eyebrow">Private capacity planning for student life</p>
+            <h1>Make room<br />before <em>burnout.</em></h1>
+            <p class="hero-copy">
+              MARGIN turns classes, work, commuting, care duties, sleep and
+              recovery into one honest picture of what your week can hold.
+            </p>
+            <div class="assurances">
+              <span>No account</span><span>Works offline</span
+              ><span>Never diagnoses</span>
+            </div>
+          </div>
+          <div class="margin-orbit" aria-hidden="true">
+            <div>
+              <strong id="heroMargin">—</strong
+              ><span>hours of weekly margin</span>
+            </div>
+            <i></i><i></i><i></i>
+          </div>
+        </div>
+
+        <div class="dashboard shell">
+          <section
+            class="one-thing-card card"
+            aria-labelledby="oneThingHeading"
+          >
+            <div>
+              <p class="step">YOUR ONE THING</p>
+              <h2 id="oneThingHeading">
+                One useful action, not the whole list.
+              </h2>
+              <div id="oneThing"></div>
+            </div>
+            <button class="secondary-btn" data-go="tasks">
+              Open Task Inbox
+            </button>
+          </section>
+          <section
+            id="shockCard"
+            class="shock-card card"
+            aria-labelledby="shockHeading"
+          >
+            <p class="step">DEADLINE RADAR</p>
+            <h2 id="shockHeading">No deadline shocks detected.</h2>
+            <div id="shockSummary"></div>
+          </section>
+          <section class="week-card card" aria-labelledby="weekHeading">
+            <div class="card-head">
+              <div>
+                <p class="step">01 · CAPACITY MAP</p>
+                <h2 id="weekHeading">Your week, honestly.</h2>
+              </div>
+              <button id="demoBtn" class="quiet-btn">Load demo week</button>
+            </div>
+            <div id="weekRibbon" class="week-ribbon"></div>
+            <div id="weekSummary" class="week-summary"></div>
+          </section>
+
+          <section class="checkin-card card" aria-labelledby="checkinHeading">
+            <div class="card-head">
+              <div>
+                <p class="step">02 · TWO-MINUTE CHECK-IN</p>
+                <h2 id="checkinHeading">How much fuel is left?</h2>
+              </div>
+              <span id="checkinSaved" class="saved-note"></span>
+            </div>
+            <button id="voiceCheckin" class="voice-btn">
+              <span aria-hidden="true">◉</span
+              ><span
+                ><strong>Speak your check-in</strong
+                ><small
+                  >Try: “I slept six hours, energy low, stress high.”</small
+                ></span
+              >
+            </button>
+            <p id="voiceStatus" class="voice-status" aria-live="polite"></p>
+            <label
+              >Energy right now <strong id="energyValue">3 / 5</strong></label
+            >
+            <input id="energyRange" type="range" min="1" max="5" value="3" />
+            <div class="range-labels">
+              <span>Empty</span><span>Steady</span><span>Full</span>
+            </div>
+            <label
+              >Stress right now <strong id="stressValue">3 / 5</strong></label
+            >
+            <input id="stressRange" type="range" min="1" max="5" value="3" />
+            <div class="range-labels">
+              <span>Calm</span><span>Stretched</span><span>Flooded</span>
+            </div>
+            <button id="saveCheckin" class="primary-btn">
+              Save check-in <span>→</span>
+            </button>
+          </section>
+
+          <section class="insight-card card" aria-labelledby="insightHeading">
+            <p class="step">03 · PLAIN-LANGUAGE INSIGHT</p>
+            <h2 id="insightHeading">What MARGIN noticed</h2>
+            <div id="mainInsight" class="main-insight"></div>
+            <div class="inline-actions">
+              <button id="readInsight" class="secondary-btn">
+                Read this aloud</button
+              ><button class="text-link" data-go="week">Open Week Lab →</button>
+            </div>
+          </section>
+
+          <section class="today-card card" aria-labelledby="todayHeading">
+            <div class="card-head">
+              <div>
+                <p class="step">TODAY</p>
+                <h2 id="todayHeading">A plan your body can afford.</h2>
+              </div>
+              <span id="todayState" class="state-pill"></span>
+            </div>
+            <div id="todayPlan" class="today-plan"></div>
+            <button class="secondary-btn" data-go="reset">
+              Find a reset that fits today
+            </button>
+          </section>
+
+          <section class="trend-card card" aria-labelledby="trendHeading">
+            <div class="card-head">
+              <div>
+                <p class="step">SEVEN-DAY SIGNALS</p>
+                <h2 id="trendHeading">Patterns, not judgments.</h2>
+              </div>
+              <span class="no-streak">No streaks</span>
+            </div>
+            <div
+              id="trendChart"
+              class="trend-chart"
+              role="img"
+              aria-label="Seven-day energy, stress and sleep trends"
+            ></div>
+            <div id="trendInsight" class="trend-insight"></div>
+          </section>
+
+          <section class="wins-card card" aria-labelledby="winsHeading">
+            <p class="step">RECOVERY FOOTPRINTS</p>
+            <h2 id="winsHeading">What helped counts.</h2>
+            <div
+              id="footprints"
+              class="footprints"
+              aria-label="Helpful reset history"
+            ></div>
+            <strong id="winsCount" class="wins-count">0 helpful moments</strong>
+            <p>
+              MARGIN celebrates useful feedback, not perfect streaks. Missed
+              days never erase progress.
+            </p>
+            <button class="text-link" data-go="reset">
+              Teach the local learner →
+            </button>
+          </section>
+        </div>
+      </section>
+
+      <section id="tasksView" class="view shell" hidden>
+        <div class="page-title">
+          <p class="eyebrow">Deadlines without all-nighters</p>
+          <h1>Real tasks.<br />A week that <em>fits.</em></h1>
+          <p>
+            Add named work with honest estimates. MARGIN schedules before
+            deadlines using available capacity—not imaginary perfect days.
+          </p>
+        </div>
+        <div class="task-layout">
+          <section class="card task-entry">
+            <p class="step">ADD A TASK</p>
+            <h2>What needs doing?</h2>
+            <label
+              >Task name<input
+                id="taskName"
+                placeholder="Example: Biology lab report"
+            /></label>
+            <div class="task-form-grid">
+              <label>Due date<input id="taskDue" type="date" /></label
+              ><label
+                >Estimated hours<input
+                  id="taskHours"
+                  type="number"
+                  min="0.5"
+                  max="40"
+                  step="0.5"
+                  value="2"
+              /></label>
+            </div>
+            <div class="task-form-grid">
+              <label
+                >Priority<select id="taskPriority">
+                  <option value="high">High</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="low">Low</option>
+                </select></label
+              ><label
+                >Smallest session<select id="taskSession">
+                  <option value="0.5">30 minutes</option>
+                  <option value="1">1 hour</option>
+                  <option value="1.5">90 minutes</option>
+                </select></label
+              >
+            </div>
+            <label class="toggle-row"
+              ><input id="taskSplit" type="checkbox" checked /><span
+                >This task can be split across days</span
+              ></label
+            >
+            <button id="addTask" class="primary-btn">
+              Add to inbox <span>＋</span>
+            </button>
+            <div class="import-box">
+              <p class="step">BULK IMPORT</p>
+              <p>
+                Use CSV columns:
+                <code>name,due,hours,priority,splittable</code>, or paste one
+                task per line using vertical bars.
+              </p>
+              <label class="file-btn" for="taskFile">Import CSV or TXT</label
+              ><input
+                id="taskFile"
+                class="visually-hidden"
+                type="file"
+                accept=".csv,.txt,text/csv,text/plain"
+              /><textarea
+                id="taskPaste"
+                rows="4"
+                placeholder="Chemistry quiz | 2026-08-18 | 2 | high | yes"
+              ></textarea
+              ><button id="parseTasks" class="quiet-btn">
+                Parse pasted tasks
+              </button>
+              <p id="taskImportStatus" class="calendar-status"></p>
+            </div>
+          </section>
+          <section class="card task-inbox">
+            <div class="card-head">
+              <div>
+                <p class="step">TASK INBOX</p>
+                <h2 id="taskCount">0 open tasks</h2>
+              </div>
+              <button id="notifyBtn" class="quiet-btn">Enable alerts</button>
+            </div>
+            <div id="taskList" class="task-list"></div>
+            <button id="scheduleTasks" class="primary-btn">
+              Build a deadline-safe plan <span>→</span>
+            </button>
+            <div id="scheduleReport" class="schedule-report" hidden></div>
+            <button id="applyTaskPlan" class="secondary-btn" hidden>
+              Apply task plan to Capacity Map
+            </button>
+          </section>
+        </div>
+      </section>
+
+      <section id="weekView" class="view shell" hidden>
+        <div class="page-title">
+          <p class="eyebrow">Scenario planning, not guilt</p>
+          <h1>What if this week<br />asked <em>less?</em></h1>
+          <p>
+            Adjust one day and see the effect before changing your real plan.
+          </p>
+        </div>
+        <div class="week-lab-grid">
+          <section class="card controls-card">
+            <div class="card-head">
+              <div>
+                <p class="step">SELECT A DAY</p>
+                <h2>Build the scenario</h2>
+              </div>
+              <button id="resetScenario" class="quiet-btn">Reset</button>
+            </div>
+            <div class="calendar-tools">
+              <label class="file-btn" for="calendarImport"
+                >Import calendar (.ics)</label
+              ><input
+                id="calendarImport"
+                class="visually-hidden"
+                type="file"
+                accept=".ics,text/calendar"
+              />
+              <button id="exportCalendar" class="quiet-btn">
+                Export safer week
+              </button>
+            </div>
+            <p
+              id="calendarStatus"
+              class="calendar-status"
+              aria-live="polite"
+            ></p>
+            <div id="dayPicker" class="day-picker"></div>
+            <div class="control-group">
+              <label for="sleepInput"
+                >Sleep <strong id="sleepOut"></strong></label
+              ><input
+                id="sleepInput"
+                type="range"
+                min="3"
+                max="10"
+                step="0.5"
+              />
+            </div>
+            <div class="control-group">
+              <label for="fixedInput"
+                >Classes + fixed work <strong id="fixedOut"></strong></label
+              ><input
+                id="fixedInput"
+                type="range"
+                min="0"
+                max="14"
+                step="0.5"
+              />
+            </div>
+            <div class="control-group">
+              <label for="flexInput"
+                >Assignments + flexible tasks
+                <strong id="flexOut"></strong></label
+              ><input id="flexInput" type="range" min="0" max="14" step="0.5" />
+            </div>
+            <div class="control-group">
+              <label for="careInput"
+                >Care duties <strong id="careOut"></strong></label
+              ><input id="careInput" type="range" min="0" max="8" step="0.5" />
+            </div>
+            <div class="control-group">
+              <label for="commuteInput"
+                >Commute <strong id="commuteOut"></strong></label
+              ><input
+                id="commuteInput"
+                type="range"
+                min="0"
+                max="6"
+                step="0.5"
+              />
+            </div>
+            <button id="saveScenario" class="primary-btn">
+              Use this safer plan <span>✓</span>
+            </button>
+          </section>
+          <section class="card comparison-card">
+            <p class="step">BEFORE / AFTER</p>
+            <h2 id="scenarioTitle">Your capacity changes live.</h2>
+            <div class="comparison-bars">
+              <div>
+                <span>Original margin</span>
+                <div class="track"><i id="beforeBar"></i></div>
+                <strong id="beforeValue"></strong>
+              </div>
+              <div>
+                <span>Scenario margin</span>
+                <div class="track"><i id="afterBar"></i></div>
+                <strong id="afterValue"></strong>
+              </div>
+            </div>
+            <div id="scenarioVerdict" class="scenario-verdict"></div>
+            <div class="explain-box">
+              <h3>Why this changed</h3>
+              <div id="scenarioWhy"></div>
+            </div>
+            <div class="suggestions">
+              <h3>Smallest useful moves</h3>
+              <div id="moveSuggestions"></div>
+            </div>
+            <div class="rescue-box">
+              <div>
+                <p class="step">LOCAL SCHEDULE OPTIMIZER</p>
+                <h3>Rescue the whole week</h3>
+                <p>
+                  Move flexible work away from redline days while protecting
+                  sleep, care duties and a recovery reserve.
+                </p>
+              </div>
+              <button id="rescueWeek" class="primary-btn">
+                Find a safer distribution <span>↗</span>
+              </button>
+              <div id="rescueReport" class="rescue-report" hidden></div>
+              <button id="applyRescue" class="secondary-btn" hidden>
+                Apply rescued week
+              </button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="resetView" class="view shell" hidden>
+        <div class="page-title">
+          <p class="eyebrow">On-device adaptive recommendations</p>
+          <h1>A reset that fits<br />the moment <em>you have.</em></h1>
+          <p>
+            No generic wellness list. MARGIN learns only from your explicit
+            feedback, and all learning stays on this device.
+          </p>
+        </div>
+        <div class="reset-grid">
+          <section class="card reset-controls">
+            <p class="step">YOUR CONTEXT</p>
+            <h2>What is possible right now?</h2>
+            <label>Time available</label>
+            <div id="timeChoices" class="choice-row">
+              <button data-minutes="2">2 min</button
+              ><button data-minutes="5" class="active">5 min</button
+              ><button data-minutes="10">10 min</button
+              ><button data-minutes="20">20 min</button>
+            </div>
+            <label>Energy</label>
+            <div id="resetEnergy" class="choice-row">
+              <button data-energy="low">Low</button
+              ><button data-energy="medium" class="active">Medium</button
+              ><button data-energy="high">High</button>
+            </div>
+            <label>Where are you?</label>
+            <div id="placeChoices" class="choice-row wrap">
+              <button data-place="public" class="active">Around people</button
+              ><button data-place="private">Some privacy</button
+              ><button data-place="outside">Outside</button>
+            </div>
+            <label class="toggle-row"
+              ><input id="quietOnly" type="checkbox" /><span
+                >Needs to be silent</span
+              ></label
+            >
+            <button id="findReset" class="primary-btn">
+              Find my best-fit reset <span>→</span>
+            </button>
+          </section>
+          <section class="card recommendation-card">
+            <div class="rec-top">
+              <p class="step">MARGIN RECOMMENDS</p>
+              <span id="learningBadge">Local learner</span>
+            </div>
+            <div id="recommendation" class="recommendation empty-rec">
+              <span class="rec-icon">✦</span>
+              <h2>Tell MARGIN what is possible.</h2>
+              <p>
+                Your recommendation and the reason behind it will appear here.
+              </p>
+            </div>
+            <div id="timerBox" class="timer-box" hidden>
+              <strong id="timerDisplay">05:00</strong
+              ><button id="timerBtn" class="secondary-btn">Start</button>
+            </div>
+            <div id="feedbackBox" class="feedback" hidden>
+              <p>Did this help even a little?</p>
+              <button data-feedback="yes">Yes, keep learning</button
+              ><button data-feedback="no">Not this time</button>
+            </div>
+            <details class="model-details">
+              <summary>How the local learner decides</summary>
+              <p>
+                MARGIN scores context fit, available time, accessibility and
+                your previous “helped / did not help” feedback. It adds a
+                repetition penalty so one action does not dominate. It does not
+                infer a diagnosis or read private messages.
+              </p>
+            </details>
+          </section>
+        </div>
+      </section>
+
+      <section id="supportView" class="view shell" hidden>
+        <div class="page-title">
+          <p class="eyebrow">Ask for help without over-explaining</p>
+          <h1>Your support needs,<br />in <em>your words.</em></h1>
+          <p>
+            Create a small card for a friend, teacher, roommate or family
+            member. Nothing is uploaded.
+          </p>
+        </div>
+        <div class="support-grid">
+          <section class="card support-form">
+            <p class="step">BUILD YOUR CARD</p>
+            <h2>What should someone know?</h2>
+            <label for="supportName"
+              >Name or nickname <span>optional</span></label
+            ><input
+              id="supportName"
+              placeholder="How should they address you?"
+            />
+            <label for="overloadSigns"
+              >When I’m overloaded, you might notice…</label
+            ><textarea
+              id="overloadSigns"
+              rows="3"
+              placeholder="I go quiet, miss messages, or struggle to decide what to do first."
+            ></textarea>
+            <label for="helpfulActions">What helps me most is…</label
+            ><textarea
+              id="helpfulActions"
+              rows="3"
+              placeholder="Help me choose one next step, bring water, or sit with me quietly."
+            ></textarea>
+            <label for="avoidActions">Please avoid…</label
+            ><textarea
+              id="avoidActions"
+              rows="3"
+              placeholder="Giving me five solutions at once or telling me to calm down."
+            ></textarea>
+            <div class="support-actions">
+              <button id="updateCard" class="primary-btn">
+                Update card <span>→</span></button
+              ><button id="clearSupport" class="quiet-btn">Clear</button>
+            </div>
+          </section>
+          <section class="card preview-wrap">
+            <p class="step">PRIVATE PREVIEW</p>
+            <article id="supportPreview" class="support-preview">
+              <span class="preview-mark">M</span>
+              <p class="preview-label">HOW TO SUPPORT ME</p>
+              <h2 id="previewName">A small guide for a hard moment</h2>
+              <div>
+                <span>You may notice</span>
+                <p id="previewSigns">I may have less capacity than usual.</p>
+              </div>
+              <div>
+                <span>What helps</span>
+                <p id="previewHelp">Ask what kind of support I want.</p>
+              </div>
+              <div>
+                <span>Please avoid</span>
+                <p id="previewAvoid">Assuming silence means I do not care.</p>
+              </div>
+              <footer>This card shares preferences, not a diagnosis.</footer>
+            </article>
+            <div class="preview-actions">
+              <button id="copyCard" class="secondary-btn">Copy text</button
+              ><button id="downloadCard" class="secondary-btn">
+                Download image</button
+              ><button id="printCard" class="secondary-btn">Print / PDF</button>
+            </div>
+          </section>
+        </div>
+        <div class="sharing-grid">
+          <section class="availability-card card">
+            <p class="step">SHARE ONLY AVAILABILITY</p>
+            <h2>Coordinate without sharing wellness data.</h2>
+            <p>
+              Export green and thin-margin study periods. Energy, stress, sleep
+              and check-ins stay private.
+            </p>
+            <textarea id="availabilityOutput" rows="6" readonly></textarea>
+            <div class="boundary-actions">
+              <button id="makeAvailability" class="secondary-btn">
+                Create availability</button
+              ><button id="copyAvailability" class="secondary-btn">Copy</button>
+            </div>
+          </section>
+          <section class="transfer-card card">
+            <p class="step">ENCRYPTED DEVICE TRANSFER</p>
+            <h2>Move MARGIN without an account.</h2>
+            <p>
+              Protect an export with a passphrase, then import it on another
+              device. The passphrase is never stored.
+            </p>
+            <input
+              id="transferPass"
+              type="password"
+              placeholder="Create or enter a passphrase"
+            />
+            <div class="boundary-actions">
+              <button id="encryptExport" class="secondary-btn">
+                Export encrypted</button
+              ><label class="file-btn" for="encryptedImport"
+                >Import encrypted</label
+              ><input
+                id="encryptedImport"
+                class="visually-hidden"
+                type="file"
+                accept=".margin,application/json"
+              />
+            </div>
+            <p id="transferStatus" class="calendar-status"></p>
+          </section>
+        </div>
+        <section class="campus-pack card">
+          <div>
+            <p class="step">CAMPUS MODE</p>
+            <h2>Carry verified local resources offline.</h2>
+            <p>
+              Import a JSON resource pack from a school or community. MARGIN
+              never treats an unverified pack as official.
+            </p>
+          </div>
+          <div class="campus-actions">
+            <label class="file-btn" for="resourcePackImport"
+              >Import resource pack</label
+            ><input
+              id="resourcePackImport"
+              class="visually-hidden"
+              type="file"
+              accept=".json,application/json"
+            /><button id="exportResourcePack" class="secondary-btn">
+              Export my pack
+            </button>
+          </div>
+          <div id="campusResources" class="campus-resources"></div>
+        </section>
+        <section class="boundary-card card">
+          <div>
+            <p class="step">ADVOCATE WITHOUT OVER-EXPLAINING</p>
+            <h2>Ask for flexibility clearly.</h2>
+            <p>
+              Create a respectful message that describes a capacity conflict
+              without inventing a diagnosis or sharing private details.
+            </p>
+          </div>
+          <div class="boundary-form">
+            <label
+              >Who is it for?<select id="boundaryAudience">
+                <option value="lecturer">Lecturer or teacher</option>
+                <option value="manager">Manager or supervisor</option>
+                <option value="team">Project team</option>
+              </select></label
+            >
+            <label
+              >What do you need?<select id="boundaryRequest">
+                <option value="extension">A short deadline extension</option>
+                <option value="scope">A smaller scope</option>
+                <option value="meeting">A meeting to reprioritize</option>
+                <option value="shift">A schedule or shift change</option>
+              </select></label
+            >
+            <label
+              >New date or alternative
+              <input
+                id="boundaryDate"
+                placeholder="Example: Monday, or 48 extra hours"
+            /></label>
+            <button id="generateBoundary" class="primary-btn">
+              Generate a respectful draft <span>→</span>
+            </button>
+          </div>
+          <textarea
+            id="boundaryOutput"
+            rows="7"
+            readonly
+            placeholder="Your editable draft will appear here."
+          ></textarea>
+          <div class="boundary-actions">
+            <button id="copyBoundary" class="secondary-btn">Copy draft</button
+            ><span>Review and personalize before sending.</span>
+          </div>
+        </section>
+        <section class="resource-card card">
+          <div>
+            <p class="step">HUMAN SUPPORT</p>
+            <h2>Technology should know when to step aside.</h2>
+            <p>
+              MARGIN is not therapy or emergency care. Save one trusted person
+              or campus resource so human help is easier to reach.
+            </p>
+          </div>
+          <div class="resource-fields">
+            <input
+              id="resourceName"
+              placeholder="Trusted person or campus service"
+            /><input
+              id="resourceContact"
+              placeholder="Phone, room, email, or link"
+            /><button id="saveResource" class="secondary-btn">
+              Save locally
+            </button>
+          </div>
+          <div id="savedResource" class="saved-resource"></div>
+          <p class="safety-note">
+            <strong
+              >If you may act on thoughts of harming yourself or someone
+              else:</strong
+            >
+            contact local emergency services now, go to the nearest emergency
+            department, or tell a trusted person who can stay with you. Do not
+            rely on this app.
+          </p>
+        </section>
+        <section class="privacy-card card">
+          <div>
+            <p class="step">YOUR DATA</p>
+            <h2>Local means yours.</h2>
+            <p>
+              MARGIN saves this week, check-ins and recommendation feedback only
+              in this browser.
+            </p>
+          </div>
+          <div>
+            <button id="exportData" class="secondary-btn">Export my data</button
+            ><button id="deleteData" class="danger-btn">
+              Delete everything
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <section id="howView" class="view shell" hidden>
+        <div class="page-title">
+          <p class="eyebrow">Transparent by design</p>
+          <h1>No mystery score.<br />No fake <em>therapist.</em></h1>
+          <p>
+            MARGIN explains every calculation, what it stores and where its
+            limits begin.
+          </p>
+        </div>
+        <div class="how-grid">
+          <section class="card">
+            <p class="step">CAPACITY FORMULA</p>
+            <h2>What can this day honestly hold?</h2>
+            <div class="formula">
+              <strong>Available capacity</strong
+              ><span
+                >= waking time − fixed commitments − care − commute − recovery
+                reserve</span
+              ><strong>Flexible demand</strong
+              ><span>= estimated task time × explainable friction factor</span
+              ><strong>Capacity debt</strong
+              ><span>= demand beyond available capacity</span>
+            </div>
+          </section>
+          <section class="card">
+            <p class="step">LOCAL LEARNING</p>
+            <h2>Feedback, not surveillance.</h2>
+            <p>
+              The Reset Engine uses a small contextual-bandit score. It
+              considers time, energy, place, silence needs and explicit “helped
+              / did not help” feedback. It does not read messages, infer
+              diagnoses or upload behavior.
+            </p>
+          </section>
+          <section class="card">
+            <p class="step">BOUNDARIES</p>
+            <h2>What MARGIN cannot know.</h2>
+            <ul>
+              <li>It cannot diagnose or predict a mental-health condition.</li>
+              <li>
+                It cannot know whether an estimate or deadline is accurate.
+              </li>
+              <li>
+                It cannot replace emergency, medical or counseling support.
+              </li>
+              <li>Imported files must be reviewed by the user.</li>
+            </ul>
+          </section>
+          <section class="card">
+            <p class="step">DATA MAP</p>
+            <h2>Stored only in this browser.</h2>
+            <div class="data-list">
+              <span>Week and tasks</span><span>Check-ins</span
+              ><span>Reset feedback</span><span>Support preferences</span
+              ><span>Imported resource packs</span>
+            </div>
+            <p>Optional encrypted transfer is created only when requested.</p>
+          </section>
+        </div>
+        <section class="card test-card">
+          <div>
+            <p class="step">PRODUCT TRUST</p>
+            <h2>Validate with people, not invented claims.</h2>
+            <p>
+              MARGIN currently demonstrates a working product and transparent
+              model. Real impact claims require usability studies with students
+              and review by accessibility and wellness professionals.
+            </p>
+          </div>
+          <div class="test-actions">
+            <a class="secondary-btn" href="tests.html">Run model self-check</a>
+            <button class="secondary-btn" data-go="today">
+              Return to Today
+            </button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <section
+      id="tourOverlay"
+      class="tour-overlay"
+      hidden
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="tourTitle"
+    >
+      <div class="tour-card">
+        <div class="calm-head">
+          <span>MARGIN · QUICK TOUR</span
+          ><button id="closeTour" aria-label="Close tour">×</button>
+        </div>
+        <p id="tourNumber" class="step">1 OF 4</p>
+        <div id="tourVisual" class="tour-visual" aria-hidden="true"></div>
+        <h2 id="tourTitle">See what your week can honestly hold.</h2>
+        <p id="tourCopy">
+          The Capacity Map counts fixed life, flexible work, care, commuting,
+          sleep and a recovery reserve.
+        </p>
+        <div class="tour-actions">
+          <button id="tourBack" class="secondary-btn">Back</button
+          ><button id="tourNext" class="primary-btn">
+            Next <span>→</span>
+          </button>
+        </div>
       </div>
-      <section class="card test-card"><div><p class="step">PRODUCT TRUST</p><h2>Validate with people, not invented claims.</h2><p>MARGIN currently demonstrates a working product and transparent model. Real impact claims require usability studies with students and review by accessibility and wellness professionals.</p></div><button class="secondary-btn" data-go="today">Return to Today</button></section>
     </section>
-  </main>
 
-  <section id="calmOverlay" class="calm-overlay" hidden aria-modal="true" role="dialog" aria-labelledby="calmTitle">
-    <div class="calm-shell">
-      <div class="calm-head"><span>MARGIN · CALM NOW</span><button id="closeCalm" aria-label="Close Calm Now">×</button></div>
-      <div class="calm-progress"><i id="calmProgress"></i></div>
-      <article id="calmStep" class="calm-step"><p id="calmNumber">STEP 1 OF 4</p><h2 id="calmTitle">Nothing else is required for this minute.</h2><p id="calmCopy">Put both feet somewhere supported. Let the screen wait.</p></article>
-      <div id="breathingPacer" class="breathing-pacer" hidden><div><span>Breathe normally</span></div></div>
-      <div class="calm-actions"><button id="calmRead" class="secondary-btn">Read aloud</button><button id="calmBack" class="secondary-btn">Back</button><button id="calmNext" class="primary-btn">One next step <span>→</span></button></div>
-      <button id="humanHelp" class="human-help">I need human help, not another exercise</button>
-    </div>
-  </section>
+    <section
+      id="calmOverlay"
+      class="calm-overlay"
+      hidden
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="calmTitle"
+    >
+      <div class="calm-shell">
+        <div class="calm-head">
+          <span>MARGIN · CALM NOW</span
+          ><button id="closeCalm" aria-label="Close Calm Now">×</button>
+        </div>
+        <div class="calm-progress"><i id="calmProgress"></i></div>
+        <article id="calmStep" class="calm-step">
+          <p id="calmNumber">STEP 1 OF 4</p>
+          <h2 id="calmTitle">Nothing else is required for this minute.</h2>
+          <p id="calmCopy">
+            Put both feet somewhere supported. Let the screen wait.
+          </p>
+        </article>
+        <div id="breathingPacer" class="breathing-pacer" hidden>
+          <div><span>Breathe normally</span></div>
+        </div>
+        <div class="calm-actions">
+          <button id="calmRead" class="secondary-btn">Read aloud</button
+          ><button id="calmBack" class="secondary-btn">Back</button
+          ><button id="calmNext" class="primary-btn">
+            One next step <span>→</span>
+          </button>
+        </div>
+        <button id="humanHelp" class="human-help">
+          I need human help, not another exercise
+        </button>
+      </div>
+    </section>
 
-  <aside id="accessPanel" class="access-panel" hidden aria-label="Accessibility settings">
-    <div class="access-head"><strong>Make MARGIN yours</strong><button id="closeAccess" aria-label="Close">×</button></div>
-    <label class="toggle-row"><input id="contrastToggle" type="checkbox"><span>Higher contrast</span></label>
-    <label class="toggle-row"><input id="calmToggle" type="checkbox"><span>Calm mode — less motion</span></label>
-    <label>Text size</label><div class="choice-row"><button data-size="normal" class="active">Normal</button><button data-size="large">Large</button></div>
-  </aside>
+    <aside
+      id="accessPanel"
+      class="access-panel"
+      hidden
+      aria-label="Accessibility settings"
+    >
+      <div class="access-head">
+        <strong>Make MARGIN yours</strong
+        ><button id="closeAccess" aria-label="Close">×</button>
+      </div>
+      <label class="toggle-row"
+        ><input id="contrastToggle" type="checkbox" /><span
+          >Higher contrast</span
+        ></label
+      >
+      <label class="toggle-row"
+        ><input id="calmToggle" type="checkbox" /><span
+          >Calm mode — less motion</span
+        ></label
+      >
+      <label>Text size</label>
+      <div class="choice-row">
+        <button data-size="normal" class="active">Normal</button
+        ><button data-size="large">Large</button>
+      </div>
+    </aside>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="app.js"></script>
-</body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="app.js"></script>
+  </body>
 </html>
