@@ -1,4 +1,4 @@
-const CACHE = "margin-v6";
+const CACHE = "margin-v7";
 const ASSETS = [
   "./",
   "./index.html",
@@ -10,39 +10,53 @@ const ASSETS = [
   "./manifest.webmanifest",
   "./icon.svg",
 ];
-self.addEventListener("install", (e) =>
-  e.waitUntil(
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
     caches
       .open(CACHE)
-      .then((c) => c.addAll(ASSETS))
+      .then((cache) => cache.addAll(ASSETS))
       .then(() => self.skipWaiting()),
-  ),
-);
-self.addEventListener("activate", (e) =>
-  e.waitUntil(
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
     caches
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)),
+          keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)),
         ),
       )
       .then(() => self.clients.claim()),
-  ),
-);
-self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET") return;
-  e.respondWith(
-    caches.match(e.request).then(
-      (r) =>
-        r ||
-        fetch(e.request)
-          .then((res) => {
-            const copy = res.clone();
-            caches.open(CACHE).then((c) => c.put(e.request, copy));
-            return res;
-          })
-          .catch(() => caches.match("./index.html")),
-    ),
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+
+  // Network-first avoids mixing a newly deployed page with an older cached
+  // script. The cache remains the fallback when the user is offline.
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached) return cached;
+
+        if (event.request.mode === "navigate") {
+          return caches.match("./index.html");
+        }
+
+        return new Response("Offline resource unavailable", {
+          status: 503,
+          headers: { "Content-Type": "text/plain" },
+        });
+      }),
   );
 });

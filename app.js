@@ -1777,7 +1777,19 @@ applySettings();
 if (!localStorage.getItem("margin-tour-seen")) {
   setTimeout(openTour, 650);
 }
-if ("serviceWorker" in navigator)
-  addEventListener("load", () =>
-    navigator.serviceWorker.register("./sw.js").catch(() => {}),
-  );
+if ("serviceWorker" in navigator) {
+  let refreshingForUpdate = false;
+
+  navigator.serviceWorker.addEventListener?.("controllerchange", () => {
+    if (refreshingForUpdate) return;
+    refreshingForUpdate = true;
+    window.location.reload();
+  });
+
+  addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").then((registration) => {
+      const updateRequest = registration.update?.();
+      updateRequest?.catch(() => {});
+    });
+  });
+}
