@@ -339,17 +339,61 @@ function renderDashboard() {
     .map((d, i) => {
       const r = results[i],
         height = Math.max(10, Math.min(100, 50 + r.margin * 7));
-      return `<article class="day-column ${r.level} ${i === 5 ? "today" : ""}"><span class="day-state"></span><span class="day-name">${d.day}</span><span class="day-date">Aug ${d.date}</span><div class="capacity-bar"><i style="height:${height}%;--capacity:${height}%"></i></div><strong class="day-margin">${fmt(r.margin)}</strong><small>${r.level === "red" ? "capacity debt" : r.level === "amber" ? "thin margin" : "usable margin"}</small></article>`;
+      const statusLabel =
+        r.level === "red"
+          ? "capacity debt"
+          : r.level === "amber"
+            ? "thin margin"
+            : "usable margin";
+
+      return `
+        <article class="day-column ${r.level} ${i === 5 ? "today" : ""}">
+          <span class="day-state"></span>
+          <span class="day-name">${d.day}</span>
+          <span class="day-date">Aug ${d.date}</span>
+          <div class="capacity-bar">
+            <i style="height:${height}%;--capacity:${height}%"></i>
+          </div>
+          <strong class="day-margin">${fmt(r.margin)}</strong>
+          <small>${statusLabel}</small>
+        </article>
+      `;
     })
     .join("");
-  $("#weekSummary").innerHTML =
-    `<span class="summary-chip"><strong>${red}</strong> redline days</span><span class="summary-chip"><strong>${amber}</strong> thin-margin days</span><span class="summary-chip"><strong>${state.week.reduce((s, d) => s + d.care, 0).toFixed(1)}h</strong> care work counted</span><span class="summary-chip"><strong>${state.week.reduce((s, d) => s + d.commute, 0).toFixed(1)}h</strong> commuting counted</span>`;
+  const careHours = state.week.reduce((total, day) => total + day.care, 0);
+  const commuteHours = state.week.reduce(
+    (total, day) => total + day.commute,
+    0,
+  );
+  const summaryItems = [
+    [red, "redline days"],
+    [amber, "thin-margin days"],
+    [`${careHours.toFixed(1)}h`, "care work counted"],
+    [`${commuteHours.toFixed(1)}h`, "commuting counted"],
+  ];
+
+  $("#weekSummary").innerHTML = summaryItems
+    .map(
+      ([value, label]) => `
+        <span class="summary-chip">
+          <strong>${value}</strong> ${label}
+        </span>
+      `,
+    )
+    .join("");
   const worst = results
       .map((r, i) => ({ ...r, i }))
       .sort((a, b) => a.margin - b.margin)[0],
     wd = state.week[worst.i];
-  $("#mainInsight").innerHTML =
-    `<strong>${wd.day} is carrying more than it can hold.</strong><p>After sleep, fixed commitments, care work, commuting and a minimum recovery reserve, ${wd.day} has ${worst.debt.toFixed(1)} hours of capacity debt. Moving even one flexible block could protect the rest of the week.</p>`;
+  $("#mainInsight").innerHTML = `
+    <strong>${wd.day} is carrying more than it can hold.</strong>
+    <p>
+      After sleep, fixed commitments, care work, commuting and a minimum
+      recovery reserve, ${wd.day} has ${worst.debt.toFixed(1)} hours of
+      capacity debt. Moving even one flexible block could protect the rest
+      of the week.
+    </p>
+  `;
   const td = state.week[5],
     tr = results[5];
   $("#todayState").textContent =
@@ -396,8 +440,17 @@ function renderTrends() {
       }));
   $("#trendChart").innerHTML = data
     .map(
-      (d) =>
-        `<div class="trend-day" title="${d.day}: energy ${d.energy}, stress ${d.stress}, sleep ${d.sleep} hours"><i style="height:${d.energy * 18}%"></i><i style="height:${d.stress * 18}%"></i><i style="height:${Math.min(100, d.sleep * 10)}%"></i><span>${d.day}</span></div>`,
+      (day) => `
+        <div
+          class="trend-day"
+          title="${day.day}: energy ${day.energy}, stress ${day.stress}, sleep ${day.sleep} hours"
+        >
+          <i style="height:${day.energy * 18}%"></i>
+          <i style="height:${day.stress * 18}%"></i>
+          <i style="height:${Math.min(100, day.sleep * 10)}%"></i>
+          <span>${day.day}</span>
+        </div>
+      `,
     )
     .join("");
   const low = [...data].sort(
@@ -428,9 +481,28 @@ function renderOneThing() {
       .filter((t) => (t.remaining ?? t.hours) > 0)
       .sort(taskSort),
     one = tasks[0];
-  $("#oneThing").innerHTML = one
-    ? `<strong>${escapeHTML(one.name)}</strong><p>${Math.min(one.session || 0.5, one.remaining ?? one.hours).toFixed(1)}h session · due ${new Date(one.due + "T12:00:00").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}. Start only this session; the rest remains scheduled.</p>`
-    : "<strong>Your inbox is clear.</strong><p>Add a real task to receive one deadline-aware next action.</p>";
+  if (one) {
+    const sessionLength = Math.min(
+      one.session || 0.5,
+      one.remaining ?? one.hours,
+    );
+    const dueLabel = new Date(`${one.due}T12:00:00`).toLocaleDateString(
+      undefined,
+      { weekday: "short", month: "short", day: "numeric" },
+    );
+    $("#oneThing").innerHTML = `
+      <strong>${escapeHTML(one.name)}</strong>
+      <p>
+        ${sessionLength.toFixed(1)}h session · due ${dueLabel}. Start only this
+        session; the rest remains scheduled.
+      </p>
+    `;
+  } else {
+    $("#oneThing").innerHTML = `
+      <strong>Your inbox is clear.</strong>
+      <p>Add a real task to receive one deadline-aware next action.</p>
+    `;
+  }
   const soon = tasks.filter((t) => daysUntil(t.due) <= 2),
     hours = soon.reduce((s, t) => s + (t.remaining ?? t.hours), 0),
     available = state.week
@@ -559,19 +631,43 @@ function normalizeTask(t) {
     session: Math.max(0.5, +t.session || 0.5),
   };
 }
+function taskCardHTML(task) {
+  const isOverdue = daysUntil(task.due) < 0;
+  const remainingHours = task.remaining ?? task.hours;
+  const dueLabel = new Date(`${task.due}T12:00:00`).toLocaleDateString();
+
+  return `
+    <article class="task-item ${isOverdue ? "overdue" : ""}">
+      <div>
+        <h3>${escapeHTML(task.name)}</h3>
+        <div class="task-meta">
+          <span class="${task.priority}">${task.priority}</span>
+          <span>${remainingHours.toFixed(1)}h remaining</span>
+          <span>due ${dueLabel}</span>
+          <span>${task.split ? "splittable" : "one block"}</span>
+        </div>
+      </div>
+      <button
+        class="task-delete"
+        data-delete-task="${escapeHTML(task.id)}"
+        aria-label="Delete ${escapeHTML(task.name)}"
+      >×</button>
+    </article>
+  `;
+}
+
 function renderTasks() {
   state.tasks = state.tasks.map(normalizeTask);
   const tasks = [...state.tasks].sort(taskSort);
   $("#taskCount").textContent =
     `${tasks.length} open task${tasks.length === 1 ? "" : "s"}`;
   $("#taskList").innerHTML = tasks.length
-    ? tasks
-        .map(
-          (t) =>
-            `<article class="task-item ${daysUntil(t.due) < 0 ? "overdue" : ""}"><div><h3>${escapeHTML(t.name)}</h3><div class="task-meta"><span class="${t.priority}">${t.priority}</span><span>${(t.remaining ?? t.hours).toFixed(1)}h remaining</span><span>due ${new Date(t.due + "T12:00:00").toLocaleDateString()}</span><span>${t.split ? "splittable" : "one block"}</span></div></div><button class="task-delete" data-delete-task="${escapeHTML(t.id)}" aria-label="Delete ${escapeHTML(t.name)}">×</button></article>`,
-        )
-        .join("")
-    : '<div class="empty-tasks">No tasks yet. Add one real deadline to start.</div>';
+    ? tasks.map(taskCardHTML).join("")
+    : `
+      <div class="empty-tasks">
+        No tasks yet. Add one real deadline to start.
+      </div>
+    `;
   $$("[data-delete-task]").forEach((b) =>
     b.addEventListener("click", () => {
       state.tasks = state.tasks.filter((t) => t.id !== b.dataset.deleteTask);
@@ -651,6 +747,32 @@ $("#taskFile").addEventListener("change", async (e) => {
 function buildTaskPlan() {
   return buildDeadlinePlan(state.week, state.tasks, new Date());
 }
+function scheduledDayHTML(group) {
+  const names = group.items.map((item) => escapeHTML(item.name)).join(", ");
+  const hours = group.items.reduce((total, item) => total + item.hours, 0);
+
+  return `
+    <div class="schedule-row">
+      <b>${group.day}</b>
+      <span>${names}</span>
+      <strong>${hours.toFixed(1)}h</strong>
+    </div>
+  `;
+}
+
+function unscheduledTasksHTML(items) {
+  if (items.length === 0) return "";
+  const lines = items
+    .map(
+      (item) => `
+        ${escapeHTML(item.task.name)}: ${item.hours.toFixed(1)}h unscheduled —
+        ${escapeHTML(item.reason)}
+      `,
+    )
+    .join("<br>");
+  return `<div class="schedule-warning">${lines}</div>`;
+}
+
 function showTaskPlan(plan) {
   const grouped = state.week
     .map((d, i) => ({
@@ -658,9 +780,17 @@ function showTaskPlan(plan) {
       items: plan.entries.filter((e) => e.day === i),
     }))
     .filter((g) => g.items.length);
+  const scheduledHours = plan.entries.reduce(
+    (total, entry) => total + entry.hours,
+    0,
+  );
+
   $("#scheduleReport").hidden = false;
-  $("#scheduleReport").innerHTML =
-    `<strong>${plan.entries.reduce((s, e) => s + e.hours, 0).toFixed(1)}h placed before deadlines</strong>${grouped.map((g) => `<div class="schedule-row"><b>${g.day}</b><span>${g.items.map((i) => escapeHTML(i.name)).join(", ")}</span><strong>${g.items.reduce((s, i) => s + i.hours, 0).toFixed(1)}h</strong></div>`).join("")}${plan.unscheduled.length ? `<div class="schedule-warning">${plan.unscheduled.map((u) => `${escapeHTML(u.task.name)}: ${u.hours.toFixed(1)}h unscheduled — ${escapeHTML(u.reason)}`).join("<br>")}</div>` : ""}`;
+  $("#scheduleReport").innerHTML = `
+    <strong>${scheduledHours.toFixed(1)}h placed before deadlines</strong>
+    ${grouped.map(scheduledDayHTML).join("")}
+    ${unscheduledTasksHTML(plan.unscheduled)}
+  `;
   $("#applyTaskPlan").hidden = !plan.entries.length;
 }
 $("#scheduleTasks").addEventListener("click", () => {
@@ -735,8 +865,20 @@ function renderScenario() {
   $("#afterBar").style.width = width(after.margin);
   $("#beforeValue").textContent = fmt(before.margin);
   $("#afterValue").textContent = fmt(after.margin);
-  $("#scenarioVerdict").innerHTML =
-    `<strong>${delta >= 0 ? "+" : ""}${delta.toFixed(1)} hours of breathing room</strong><p>${after.level === "red" ? "This scenario still creates capacity debt. Keep reducing flexible demand or protect more sleep." : after.level === "amber" ? "This is safer, but the margin remains thin." : "This plan keeps a usable recovery margin without pretending every hour is productive."}</p>`;
+  let scenarioMessage =
+    "This plan keeps a usable recovery margin without pretending every hour is productive.";
+  if (after.level === "red") {
+    scenarioMessage =
+      "This scenario still creates capacity debt. Keep reducing flexible demand or protect more sleep.";
+  } else if (after.level === "amber") {
+    scenarioMessage = "This is safer, but the margin remains thin.";
+  }
+
+  const deltaLabel = `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}`;
+  $("#scenarioVerdict").innerHTML = `
+    <strong>${deltaLabel} hours of breathing room</strong>
+    <p>${scenarioMessage}</p>
+  `;
   $("#scenarioWhy").innerHTML = [
     ["Waking time", `${after.waking.toFixed(1)}h`],
     ["Capacity after fixed life", `${after.available.toFixed(1)}h`],
@@ -790,17 +932,30 @@ $("#rescueWeek").addEventListener("click", () => {
     if (g) g.h += m.hours;
     else grouped.push({ k, h: m.hours });
   });
+  const rescuedHours = o.beforeDebt - o.afterDebt;
+  const moveRows = grouped
+    .slice(0, 6)
+    .map(
+      (group) => `
+        <div class="rescue-move">
+          <span>${group.k}</span>
+          <b>${group.h.toFixed(1)}h moved</b>
+        </div>
+      `,
+    )
+    .join("");
+
   $("#rescueReport").hidden = false;
-  $("#rescueReport").innerHTML =
-    `<strong>${(o.beforeDebt - o.afterDebt).toFixed(1)}h less capacity debt</strong><p>Redline days: ${o.beforeRed} before, ${o.afterRed} after. Flexible work only was moved; sleep, fixed commitments, care and commuting were untouched.</p>${grouped
-      .slice(0, 6)
-      .map(
-        (g) =>
-          `<div class="rescue-move"><span>${g.k}</span><b>${g.h.toFixed(1)}h moved</b></div>`,
-      )
-      .join(
-        "",
-      )}<p>Check every suggested move against real deadlines before applying it.</p>`;
+  $("#rescueReport").innerHTML = `
+    <strong>${rescuedHours.toFixed(1)}h less capacity debt</strong>
+    <p>
+      Redline days: ${o.beforeRed} before, ${o.afterRed} after. Flexible work
+      only was moved; sleep, fixed commitments, care and commuting were
+      untouched.
+    </p>
+    ${moveRows}
+    <p>Check every suggested move against real deadlines before applying it.</p>
+  `;
   $("#applyRescue").hidden = !o.moves.length;
   if (!o.moves.length)
     toast("No safe redistribution found without changing fixed life");
@@ -1036,16 +1191,31 @@ function renderResource() {
       ? `<div class="resource-pill"><strong>${r.name || "Trusted support"}</strong><span>${r.contact || "Contact details not added"}</span></div>`
       : "";
 }
+function campusResourceHTML(resource) {
+  const verification = resource.verifiedBy
+    ? `Pack states: verified by ${escapeHTML(resource.verifiedBy)}`
+    : "Verification not supplied";
+
+  return `
+    <article class="campus-resource">
+      <strong>${escapeHTML(resource.name || "Resource")}</strong>
+      <span>${escapeHTML(resource.contact || "No contact")}</span>
+      <span>${escapeHTML(resource.hours || "Hours not supplied")}</span>
+      <span>${verification}</span>
+    </article>
+  `;
+}
+
 function renderCampusResources() {
   const list = state.resourcePack || [];
   $("#campusResources").innerHTML = list.length
-    ? list
-        .map(
-          (r) =>
-            `<article class="campus-resource"><strong>${String(r.name || "Resource").replace(/[<>&]/g, "")}</strong><span>${String(r.contact || "No contact").replace(/[<>&]/g, "")}</span><span>${String(r.hours || "Hours not supplied").replace(/[<>&]/g, "")}</span><span>${r.verifiedBy ? "Pack states: verified by " + String(r.verifiedBy).replace(/[<>&]/g, "") : "Verification not supplied"}</span></article>`,
-        )
-        .join("")
-    : '<article class="campus-resource"><strong>No resource pack imported</strong><span>Add only packs from a school or community you trust.</span></article>';
+    ? list.map(campusResourceHTML).join("")
+    : `
+      <article class="campus-resource">
+        <strong>No resource pack imported</strong>
+        <span>Add only packs from a school or community you trust.</span>
+      </article>
+    `;
 }
 function updateSupportPreview() {
   const s = {
@@ -1079,8 +1249,13 @@ $("#clearSupport").addEventListener("click", () => {
   toast("Support Card cleared");
 });
 $("#copyCard").addEventListener("click", async () => {
-  const s = updateSupportPreview(),
-    txt = `How to support ${s.name || "me"}\n\nYou may notice: ${s.signs || "I may have less capacity than usual."}\n\nWhat helps: ${s.help || "Ask what kind of support I want."}\n\nPlease avoid: ${s.avoid || "Assuming silence means I do not care."}`;
+  const s = updateSupportPreview();
+  const txt = [
+    `How to support ${s.name || "me"}`,
+    `You may notice: ${s.signs || "I may have less capacity than usual."}`,
+    `What helps: ${s.help || "Ask what kind of support I want."}`,
+    `Please avoid: ${s.avoid || "Assuming silence means I do not care."}`,
+  ].join("\n\n");
   try {
     await navigator.clipboard.writeText(txt);
     toast("Support Card copied");
@@ -1183,8 +1358,13 @@ $("#generateBoundary").addEventListener("click", () => {
           : request === "meeting"
             ? `Could we have a brief meeting to reprioritize, ideally ${alt}?`
             : `Could we adjust the schedule or shift to ${alt}?`;
-  $("#boundaryOutput").value =
-    `${hello}\n\n${context} I want to communicate before this affects the quality or reliability of my work.\n\n${ask}\n\nI can still complete the highest-priority part and will confirm the revised plan clearly. I prefer to keep personal details private, but I am raising the conflict as early as possible.\n\nThank you for considering this request.`;
+  $("#boundaryOutput").value = [
+    hello,
+    `${context} I want to communicate before this affects the quality or reliability of my work.`,
+    ask,
+    "I can still complete the highest-priority part and will confirm the revised plan clearly. I prefer to keep personal details private, but I am raising the conflict as early as possible.",
+    "Thank you for considering this request.",
+  ].join("\n\n");
 });
 $("#copyBoundary").addEventListener("click", async () => {
   if (!$("#boundaryOutput").value) {
@@ -1206,8 +1386,11 @@ $("#makeAvailability").addEventListener("click", () => {
       (x) =>
         `${x.d.day}: up to ${Math.floor(x.r.margin * 2) / 2}h available for study or meetings`,
     );
-  $("#availabilityOutput").value =
-    `My current MARGIN availability\n\n${lines.join("\n")}\n\nThis shares availability only—not sleep, stress, energy, care duties or private check-ins. Times still need confirmation.`;
+  $("#availabilityOutput").value = [
+    "My current MARGIN availability",
+    lines.join("\n"),
+    "This shares availability only—not sleep, stress, energy, care duties or private check-ins. Times still need confirmation.",
+  ].join("\n\n");
 });
 $("#copyAvailability").addEventListener("click", async () => {
   if (!$("#availabilityOutput").value) $("#makeAvailability").click();
