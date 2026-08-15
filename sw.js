@@ -1,4 +1,4 @@
-const CACHE = "margin-v5";
+const CACHE = "margin-v6";
 const ASSETS = [
   "./",
   "./index.html",

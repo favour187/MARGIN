@@ -273,6 +273,39 @@ function toast(msg) {
   clearTimeout(toast.id);
   toast.id = setTimeout(() => t.classList.remove("show"), 2300);
 }
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  // Firefox and embedded mobile browsers do not always expose the modern
+  // clipboard API. Keep a small legacy fallback for those environments.
+  const field = document.createElement("textarea");
+  field.value = text;
+  field.setAttribute("readonly", "");
+  field.style.position = "fixed";
+  field.style.opacity = "0";
+  document.body.append(field);
+  field.select();
+  const copied = document.execCommand?.("copy");
+  field.remove();
+  if (!copied) throw new Error("Clipboard permission is unavailable");
+}
+
+function downloadBlob(blob, filename, revokeAfter = 2_000) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.style.display = "none";
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), revokeAfter);
+  return url;
+}
 const fmt = (n) => `${n >= 0 ? "+" : ""}${n.toFixed(1)}h`;
 const escapeHTML = (value) =>
   String(value ?? "").replace(
@@ -1045,12 +1078,8 @@ $("#exportCalendar").addEventListener("click", () => {
     );
   });
   lines.push("END:VCALENDAR");
-  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar" }),
-    a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "margin-safer-week.ics";
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar" });
+  downloadBlob(blob, "margin-safer-week.ics");
   $("#calendarStatus").textContent =
     "Safer week exported. Review times before adding it to your calendar.";
 });
@@ -1257,13 +1286,13 @@ $("#copyCard").addEventListener("click", async () => {
     `Please avoid: ${s.avoid || "Assuming silence means I do not care."}`,
   ].join("\n\n");
   try {
-    await navigator.clipboard.writeText(txt);
+    await copyText(txt);
     toast("Support Card copied");
   } catch {
     toast("Clipboard unavailable");
   }
 });
-$("#printCard").addEventListener("click", () => print());
+$("#printCard").addEventListener("click", () => window.print());
 function canvasWrap(ctx, text, x, y, maxWidth, lineHeight, maxLines = 4) {
   const words = String(text).split(/\s+/);
   let line = "",
@@ -1332,7 +1361,10 @@ $("#downloadCard").addEventListener("click", () => {
   const a = document.createElement("a");
   a.href = c.toDataURL("image/png");
   a.download = "margin-support-card.png";
+  a.style.display = "none";
+  document.body.append(a);
   a.click();
+  a.remove();
   toast("Support Card image downloaded");
 });
 $("#generateBoundary").addEventListener("click", () => {
@@ -1372,7 +1404,7 @@ $("#copyBoundary").addEventListener("click", async () => {
     return;
   }
   try {
-    await navigator.clipboard.writeText($("#boundaryOutput").value);
+    await copyText($("#boundaryOutput").value);
     toast("Boundary message copied");
   } catch {
     toast("Clipboard unavailable");
@@ -1395,7 +1427,7 @@ $("#makeAvailability").addEventListener("click", () => {
 $("#copyAvailability").addEventListener("click", async () => {
   if (!$("#availabilityOutput").value) $("#makeAvailability").click();
   try {
-    await navigator.clipboard.writeText($("#availabilityOutput").value);
+    await copyText($("#availabilityOutput").value);
     toast("Availability copied without wellness data");
   } catch {
     toast("Clipboard unavailable");
@@ -1440,14 +1472,16 @@ $("#encryptExport").addEventListener("click", async () => {
         iv: bytesToB64(iv),
         data: bytesToB64(new Uint8Array(data)),
       },
-      blob = new Blob([JSON.stringify(payload)], { type: "application/json" }),
-      a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "margin-encrypted-transfer.margin";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+
+    const filename = "margin-encrypted-transfer.margin";
+    const downloadUrl = downloadBlob(blob, filename, 10 * 60 * 1_000);
+    const fallbackLink = $("#transferDownload");
+    fallbackLink.href = downloadUrl;
+    fallbackLink.download = filename;
+    fallbackLink.hidden = false;
     $("#transferStatus").textContent =
-      "Encrypted transfer created. Keep the passphrase separate.";
+      "Encrypted transfer created. If the download did not start, use the button below.";
   } catch {
     $("#transferStatus").textContent =
       "Encryption is unavailable in this browser.";
@@ -1515,21 +1549,14 @@ $("#exportResourcePack").addEventListener("click", () => {
       hours: "",
       verifiedBy: "Added personally on this device",
     });
-  const blob = new Blob(
-      [
-        JSON.stringify(
-          { format: "MARGIN-resource-pack-v1", resources },
-          null,
-          2,
-        ),
-      ],
-      { type: "application/json" },
-    ),
-    a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "margin-resource-pack.json";
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  const contents = JSON.stringify(
+    { format: "MARGIN-resource-pack-v1", resources },
+    null,
+    2,
+  );
+  const blob = new Blob([contents], { type: "application/json" });
+  downloadBlob(blob, "margin-resource-pack.json");
+  toast("Resource pack exported");
 });
 $("#saveResource").addEventListener("click", () => {
   state.resource = {
@@ -1542,13 +1569,10 @@ $("#saveResource").addEventListener("click", () => {
 });
 $("#exportData").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], {
-      type: "application/json",
-    }),
-    a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `margin-data-${Date.now()}.json`;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    type: "application/json",
+  });
+  downloadBlob(blob, `margin-data-${Date.now()}.json`);
+  toast("Local data export created");
 });
 $("#deleteData").addEventListener("click", () => {
   if (
