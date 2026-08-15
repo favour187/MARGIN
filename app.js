@@ -3,7 +3,7 @@ import {
   calculateCapacity as calc,
   optimiseFlexibleWeek,
   sortTasksByDeadline as taskSort,
-} from "./core.js";
+} from "./core.js?v=20260815-2";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];

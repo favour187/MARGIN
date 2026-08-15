@@ -1,10 +1,10 @@
-const CACHE = "margin-v8";
+const CACHE = "margin-v9";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
-  "./core.js",
+  "./styles.css?v=20260815-2",
+  "./app.js?v=20260815-2",
+  "./core.js?v=20260815-2",
   "./tests.html",
   "./browser-tests.js",
   "./manifest.webmanifest",
