@@ -13,14 +13,21 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="topbar">
     <button class="brand" data-view="today" aria-label="MARGIN home"><span class="brand-mark">M</span><span>MARGIN</span></button>
-    <nav aria-label="Primary">
-      <button class="nav-btn active" data-view="today">Today</button>
-      <button class="nav-btn" data-view="week">Week Lab</button>
-      <button class="nav-btn" data-view="reset">Reset Lab</button>
-      <button class="nav-btn" data-view="support">Support Card</button>
-    </nav>
-    <div class="top-actions"><button id="calmNowBtn" class="calm-now-btn">Calm now</button><button id="accessBtn" class="round-btn" aria-label="Accessibility settings">Aa</button></div>
+    <div class="top-actions"><button id="calmNowBtn" class="calm-now-btn">Calm now</button><button id="accessBtn" class="round-btn" aria-label="Accessibility settings">Aa</button><button id="menuBtn" class="menu-btn" aria-label="Open menu" aria-expanded="false">☰</button></div>
   </header>
+  <div id="menuScrim" class="menu-scrim" hidden></div>
+  <aside id="menuDrawer" class="menu-drawer" hidden aria-label="MARGIN menu">
+    <div class="drawer-head"><div><span class="brand-mark">M</span><strong>MARGIN</strong></div><button id="closeMenu" aria-label="Close menu">×</button></div>
+    <p class="drawer-label">PLAN</p>
+    <button class="drawer-link active" data-view="today"><span>01</span><div><strong>Today</strong><small>Your capacity and one next thing</small></div></button>
+    <button class="drawer-link" data-view="tasks"><span>02</span><div><strong>Task Inbox</strong><small>Deadlines and safe scheduling</small></div></button>
+    <button class="drawer-link" data-view="week"><span>03</span><div><strong>Week Lab</strong><small>Scenarios and calendar tools</small></div></button>
+    <p class="drawer-label">RECOVER & SHARE</p>
+    <button class="drawer-link" data-view="reset"><span>04</span><div><strong>Reset Lab</strong><small>Adaptive local recommendations</small></div></button>
+    <button class="drawer-link" data-view="support"><span>05</span><div><strong>Support & transfer</strong><small>Cards, resources and encrypted move</small></div></button>
+    <button class="drawer-link" data-view="how"><span>06</span><div><strong>How MARGIN works</strong><small>Formula, privacy and limitations</small></div></button>
+    <footer><span>Offline-first</span><span>No account</span><span>No diagnosis</span></footer>
+  </aside>
 
   <main id="main">
     <section id="todayView" class="view active">
@@ -35,6 +42,11 @@
       </div>
 
       <div class="dashboard shell">
+        <section class="one-thing-card card" aria-labelledby="oneThingHeading">
+          <div><p class="step">YOUR ONE THING</p><h2 id="oneThingHeading">One useful action, not the whole list.</h2><div id="oneThing"></div></div>
+          <button class="secondary-btn" data-go="tasks">Open Task Inbox</button>
+        </section>
+        <section id="shockCard" class="shock-card card" aria-labelledby="shockHeading"><p class="step">DEADLINE RADAR</p><h2 id="shockHeading">No deadline shocks detected.</h2><div id="shockSummary"></div></section>
         <section class="week-card card" aria-labelledby="weekHeading">
           <div class="card-head"><div><p class="step">01 · CAPACITY MAP</p><h2 id="weekHeading">Your week, honestly.</h2></div><button id="demoBtn" class="quiet-btn">Load demo week</button></div>
           <div id="weekRibbon" class="week-ribbon"></div>
@@ -78,6 +90,28 @@
           <strong id="winsCount" class="wins-count">0 helpful moments</strong>
           <p>MARGIN celebrates useful feedback, not perfect streaks. Missed days never erase progress.</p>
           <button class="text-link" data-go="reset">Teach the local learner →</button>
+        </section>
+      </div>
+    </section>
+
+    <section id="tasksView" class="view shell" hidden>
+      <div class="page-title"><p class="eyebrow">Deadlines without all-nighters</p><h1>Real tasks.<br>A week that <em>fits.</em></h1><p>Add named work with honest estimates. MARGIN schedules before deadlines using available capacity—not imaginary perfect days.</p></div>
+      <div class="task-layout">
+        <section class="card task-entry">
+          <p class="step">ADD A TASK</p><h2>What needs doing?</h2>
+          <label>Task name<input id="taskName" placeholder="Example: Biology lab report"></label>
+          <div class="task-form-grid"><label>Due date<input id="taskDue" type="date"></label><label>Estimated hours<input id="taskHours" type="number" min="0.5" max="40" step="0.5" value="2"></label></div>
+          <div class="task-form-grid"><label>Priority<select id="taskPriority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label><label>Smallest session<select id="taskSession"><option value="0.5">30 minutes</option><option value="1">1 hour</option><option value="1.5">90 minutes</option></select></label></div>
+          <label class="toggle-row"><input id="taskSplit" type="checkbox" checked><span>This task can be split across days</span></label>
+          <button id="addTask" class="primary-btn">Add to inbox <span>＋</span></button>
+          <div class="import-box"><p class="step">BULK IMPORT</p><p>Use CSV columns: <code>name,due,hours,priority,splittable</code>, or paste one task per line using vertical bars.</p><label class="file-btn" for="taskFile">Import CSV or TXT</label><input id="taskFile" class="visually-hidden" type="file" accept=".csv,.txt,text/csv,text/plain"><textarea id="taskPaste" rows="4" placeholder="Chemistry quiz | 2026-08-18 | 2 | high | yes"></textarea><button id="parseTasks" class="quiet-btn">Parse pasted tasks</button><p id="taskImportStatus" class="calendar-status"></p></div>
+        </section>
+        <section class="card task-inbox">
+          <div class="card-head"><div><p class="step">TASK INBOX</p><h2 id="taskCount">0 open tasks</h2></div><button id="notifyBtn" class="quiet-btn">Enable alerts</button></div>
+          <div id="taskList" class="task-list"></div>
+          <button id="scheduleTasks" class="primary-btn">Build a deadline-safe plan <span>→</span></button>
+          <div id="scheduleReport" class="schedule-report" hidden></div>
+          <button id="applyTaskPlan" class="secondary-btn" hidden>Apply task plan to Capacity Map</button>
         </section>
       </div>
     </section>
@@ -160,6 +194,11 @@
           <div class="preview-actions"><button id="copyCard" class="secondary-btn">Copy text</button><button id="downloadCard" class="secondary-btn">Download image</button><button id="printCard" class="secondary-btn">Print / PDF</button></div>
         </section>
       </div>
+      <div class="sharing-grid">
+        <section class="availability-card card"><p class="step">SHARE ONLY AVAILABILITY</p><h2>Coordinate without sharing wellness data.</h2><p>Export green and thin-margin study periods. Energy, stress, sleep and check-ins stay private.</p><textarea id="availabilityOutput" rows="6" readonly></textarea><div class="boundary-actions"><button id="makeAvailability" class="secondary-btn">Create availability</button><button id="copyAvailability" class="secondary-btn">Copy</button></div></section>
+        <section class="transfer-card card"><p class="step">ENCRYPTED DEVICE TRANSFER</p><h2>Move MARGIN without an account.</h2><p>Protect an export with a passphrase, then import it on another device. The passphrase is never stored.</p><input id="transferPass" type="password" placeholder="Create or enter a passphrase"><div class="boundary-actions"><button id="encryptExport" class="secondary-btn">Export encrypted</button><label class="file-btn" for="encryptedImport">Import encrypted</label><input id="encryptedImport" class="visually-hidden" type="file" accept=".margin,application/json"></div><p id="transferStatus" class="calendar-status"></p></section>
+      </div>
+      <section class="campus-pack card"><div><p class="step">CAMPUS MODE</p><h2>Carry verified local resources offline.</h2><p>Import a JSON resource pack from a school or community. MARGIN never treats an unverified pack as official.</p></div><div class="campus-actions"><label class="file-btn" for="resourcePackImport">Import resource pack</label><input id="resourcePackImport" class="visually-hidden" type="file" accept=".json,application/json"><button id="exportResourcePack" class="secondary-btn">Export my pack</button></div><div id="campusResources" class="campus-resources"></div></section>
       <section class="boundary-card card">
         <div><p class="step">ADVOCATE WITHOUT OVER-EXPLAINING</p><h2>Ask for flexibility clearly.</h2><p>Create a respectful message that describes a capacity conflict without inventing a diagnosis or sharing private details.</p></div>
         <div class="boundary-form">
@@ -181,6 +220,17 @@
         <div><p class="step">YOUR DATA</p><h2>Local means yours.</h2><p>MARGIN saves this week, check-ins and recommendation feedback only in this browser.</p></div>
         <div><button id="exportData" class="secondary-btn">Export my data</button><button id="deleteData" class="danger-btn">Delete everything</button></div>
       </section>
+    </section>
+
+    <section id="howView" class="view shell" hidden>
+      <div class="page-title"><p class="eyebrow">Transparent by design</p><h1>No mystery score.<br>No fake <em>therapist.</em></h1><p>MARGIN explains every calculation, what it stores and where its limits begin.</p></div>
+      <div class="how-grid">
+        <section class="card"><p class="step">CAPACITY FORMULA</p><h2>What can this day honestly hold?</h2><div class="formula"><strong>Available capacity</strong><span>= waking time − fixed commitments − care − commute − recovery reserve</span><strong>Flexible demand</strong><span>= estimated task time × explainable friction factor</span><strong>Capacity debt</strong><span>= demand beyond available capacity</span></div></section>
+        <section class="card"><p class="step">LOCAL LEARNING</p><h2>Feedback, not surveillance.</h2><p>The Reset Engine uses a small contextual-bandit score. It considers time, energy, place, silence needs and explicit “helped / did not help” feedback. It does not read messages, infer diagnoses or upload behavior.</p></section>
+        <section class="card"><p class="step">BOUNDARIES</p><h2>What MARGIN cannot know.</h2><ul><li>It cannot diagnose or predict a mental-health condition.</li><li>It cannot know whether an estimate or deadline is accurate.</li><li>It cannot replace emergency, medical or counseling support.</li><li>Imported files must be reviewed by the user.</li></ul></section>
+        <section class="card"><p class="step">DATA MAP</p><h2>Stored only in this browser.</h2><div class="data-list"><span>Week and tasks</span><span>Check-ins</span><span>Reset feedback</span><span>Support preferences</span><span>Imported resource packs</span></div><p>Optional encrypted transfer is created only when requested.</p></section>
+      </div>
+      <section class="card test-card"><div><p class="step">PRODUCT TRUST</p><h2>Validate with people, not invented claims.</h2><p>MARGIN currently demonstrates a working product and transparent model. Real impact claims require usability studies with students and review by accessibility and wellness professionals.</p></div><button class="secondary-btn" data-go="today">Return to Today</button></section>
     </section>
   </main>
 
