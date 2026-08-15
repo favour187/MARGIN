@@ -87,6 +87,11 @@
       <div class="week-lab-grid">
         <section class="card controls-card">
           <div class="card-head"><div><p class="step">SELECT A DAY</p><h2>Build the scenario</h2></div><button id="resetScenario" class="quiet-btn">Reset</button></div>
+          <div class="calendar-tools">
+            <label class="file-btn" for="calendarImport">Import calendar (.ics)</label><input id="calendarImport" class="visually-hidden" type="file" accept=".ics,text/calendar">
+            <button id="exportCalendar" class="quiet-btn">Export safer week</button>
+          </div>
+          <p id="calendarStatus" class="calendar-status" aria-live="polite"></p>
           <div id="dayPicker" class="day-picker"></div>
           <div class="control-group"><label for="sleepInput">Sleep <strong id="sleepOut"></strong></label><input id="sleepInput" type="range" min="3" max="10" step="0.5"></div>
           <div class="control-group"><label for="fixedInput">Classes + fixed work <strong id="fixedOut"></strong></label><input id="fixedInput" type="range" min="0" max="14" step="0.5"></div>
@@ -101,6 +106,12 @@
           <div id="scenarioVerdict" class="scenario-verdict"></div>
           <div class="explain-box"><h3>Why this changed</h3><div id="scenarioWhy"></div></div>
           <div class="suggestions"><h3>Smallest useful moves</h3><div id="moveSuggestions"></div></div>
+          <div class="rescue-box">
+            <div><p class="step">LOCAL SCHEDULE OPTIMIZER</p><h3>Rescue the whole week</h3><p>Move flexible work away from redline days while protecting sleep, care duties and a recovery reserve.</p></div>
+            <button id="rescueWeek" class="primary-btn">Find a safer distribution <span>↗</span></button>
+            <div id="rescueReport" class="rescue-report" hidden></div>
+            <button id="applyRescue" class="secondary-btn" hidden>Apply rescued week</button>
+          </div>
         </section>
       </div>
     </section>
@@ -146,9 +157,20 @@
             <div><span>Please avoid</span><p id="previewAvoid">Assuming silence means I do not care.</p></div>
             <footer>This card shares preferences, not a diagnosis.</footer>
           </article>
-          <div class="preview-actions"><button id="copyCard" class="secondary-btn">Copy text</button><button id="printCard" class="secondary-btn">Print / save PDF</button></div>
+          <div class="preview-actions"><button id="copyCard" class="secondary-btn">Copy text</button><button id="downloadCard" class="secondary-btn">Download image</button><button id="printCard" class="secondary-btn">Print / PDF</button></div>
         </section>
       </div>
+      <section class="boundary-card card">
+        <div><p class="step">ADVOCATE WITHOUT OVER-EXPLAINING</p><h2>Ask for flexibility clearly.</h2><p>Create a respectful message that describes a capacity conflict without inventing a diagnosis or sharing private details.</p></div>
+        <div class="boundary-form">
+          <label>Who is it for?<select id="boundaryAudience"><option value="lecturer">Lecturer or teacher</option><option value="manager">Manager or supervisor</option><option value="team">Project team</option></select></label>
+          <label>What do you need?<select id="boundaryRequest"><option value="extension">A short deadline extension</option><option value="scope">A smaller scope</option><option value="meeting">A meeting to reprioritize</option><option value="shift">A schedule or shift change</option></select></label>
+          <label>New date or alternative <input id="boundaryDate" placeholder="Example: Monday, or 48 extra hours"></label>
+          <button id="generateBoundary" class="primary-btn">Generate a respectful draft <span>→</span></button>
+        </div>
+        <textarea id="boundaryOutput" rows="7" readonly placeholder="Your editable draft will appear here."></textarea>
+        <div class="boundary-actions"><button id="copyBoundary" class="secondary-btn">Copy draft</button><span>Review and personalize before sending.</span></div>
+      </section>
       <section class="resource-card card">
         <div><p class="step">HUMAN SUPPORT</p><h2>Technology should know when to step aside.</h2><p>MARGIN is not therapy or emergency care. Save one trusted person or campus resource so human help is easier to reach.</p></div>
         <div class="resource-fields"><input id="resourceName" placeholder="Trusted person or campus service"><input id="resourceContact" placeholder="Phone, room, email, or link"><button id="saveResource" class="secondary-btn">Save locally</button></div>
