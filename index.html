@@ -19,7 +19,7 @@
       <button class="nav-btn" data-view="reset">Reset Lab</button>
       <button class="nav-btn" data-view="support">Support Card</button>
     </nav>
-    <button id="accessBtn" class="round-btn" aria-label="Accessibility settings">Aa</button>
+    <div class="top-actions"><button id="calmNowBtn" class="calm-now-btn">Calm now</button><button id="accessBtn" class="round-btn" aria-label="Accessibility settings">Aa</button></div>
   </header>
 
   <main id="main">
@@ -43,6 +43,8 @@
 
         <section class="checkin-card card" aria-labelledby="checkinHeading">
           <div class="card-head"><div><p class="step">02 · TWO-MINUTE CHECK-IN</p><h2 id="checkinHeading">How much fuel is left?</h2></div><span id="checkinSaved" class="saved-note"></span></div>
+          <button id="voiceCheckin" class="voice-btn"><span aria-hidden="true">◉</span><span><strong>Speak your check-in</strong><small>Try: “I slept six hours, energy low, stress high.”</small></span></button>
+          <p id="voiceStatus" class="voice-status" aria-live="polite"></p>
           <label>Energy right now <strong id="energyValue">3 / 5</strong></label>
           <input id="energyRange" type="range" min="1" max="5" value="3">
           <div class="range-labels"><span>Empty</span><span>Steady</span><span>Full</span></div>
@@ -55,13 +57,27 @@
         <section class="insight-card card" aria-labelledby="insightHeading">
           <p class="step">03 · PLAIN-LANGUAGE INSIGHT</p><h2 id="insightHeading">What MARGIN noticed</h2>
           <div id="mainInsight" class="main-insight"></div>
-          <button class="text-link" data-go="week">Open Week Lab to make room →</button>
+          <div class="inline-actions"><button id="readInsight" class="secondary-btn">Read this aloud</button><button class="text-link" data-go="week">Open Week Lab →</button></div>
         </section>
 
         <section class="today-card card" aria-labelledby="todayHeading">
           <div class="card-head"><div><p class="step">TODAY</p><h2 id="todayHeading">A plan your body can afford.</h2></div><span id="todayState" class="state-pill"></span></div>
           <div id="todayPlan" class="today-plan"></div>
           <button class="secondary-btn" data-go="reset">Find a reset that fits today</button>
+        </section>
+
+        <section class="trend-card card" aria-labelledby="trendHeading">
+          <div class="card-head"><div><p class="step">SEVEN-DAY SIGNALS</p><h2 id="trendHeading">Patterns, not judgments.</h2></div><span class="no-streak">No streaks</span></div>
+          <div id="trendChart" class="trend-chart" role="img" aria-label="Seven-day energy, stress and sleep trends"></div>
+          <div id="trendInsight" class="trend-insight"></div>
+        </section>
+
+        <section class="wins-card card" aria-labelledby="winsHeading">
+          <p class="step">RECOVERY FOOTPRINTS</p><h2 id="winsHeading">What helped counts.</h2>
+          <div id="footprints" class="footprints" aria-label="Helpful reset history"></div>
+          <strong id="winsCount" class="wins-count">0 helpful moments</strong>
+          <p>MARGIN celebrates useful feedback, not perfect streaks. Missed days never erase progress.</p>
+          <button class="text-link" data-go="reset">Teach the local learner →</button>
         </section>
       </div>
     </section>
@@ -133,12 +149,29 @@
           <div class="preview-actions"><button id="copyCard" class="secondary-btn">Copy text</button><button id="printCard" class="secondary-btn">Print / save PDF</button></div>
         </section>
       </div>
+      <section class="resource-card card">
+        <div><p class="step">HUMAN SUPPORT</p><h2>Technology should know when to step aside.</h2><p>MARGIN is not therapy or emergency care. Save one trusted person or campus resource so human help is easier to reach.</p></div>
+        <div class="resource-fields"><input id="resourceName" placeholder="Trusted person or campus service"><input id="resourceContact" placeholder="Phone, room, email, or link"><button id="saveResource" class="secondary-btn">Save locally</button></div>
+        <div id="savedResource" class="saved-resource"></div>
+        <p class="safety-note"><strong>If you may act on thoughts of harming yourself or someone else:</strong> contact local emergency services now, go to the nearest emergency department, or tell a trusted person who can stay with you. Do not rely on this app.</p>
+      </section>
       <section class="privacy-card card">
         <div><p class="step">YOUR DATA</p><h2>Local means yours.</h2><p>MARGIN saves this week, check-ins and recommendation feedback only in this browser.</p></div>
         <div><button id="exportData" class="secondary-btn">Export my data</button><button id="deleteData" class="danger-btn">Delete everything</button></div>
       </section>
     </section>
   </main>
+
+  <section id="calmOverlay" class="calm-overlay" hidden aria-modal="true" role="dialog" aria-labelledby="calmTitle">
+    <div class="calm-shell">
+      <div class="calm-head"><span>MARGIN · CALM NOW</span><button id="closeCalm" aria-label="Close Calm Now">×</button></div>
+      <div class="calm-progress"><i id="calmProgress"></i></div>
+      <article id="calmStep" class="calm-step"><p id="calmNumber">STEP 1 OF 4</p><h2 id="calmTitle">Nothing else is required for this minute.</h2><p id="calmCopy">Put both feet somewhere supported. Let the screen wait.</p></article>
+      <div id="breathingPacer" class="breathing-pacer" hidden><div><span>Breathe normally</span></div></div>
+      <div class="calm-actions"><button id="calmRead" class="secondary-btn">Read aloud</button><button id="calmBack" class="secondary-btn">Back</button><button id="calmNext" class="primary-btn">One next step <span>→</span></button></div>
+      <button id="humanHelp" class="human-help">I need human help, not another exercise</button>
+    </div>
+  </section>
 
   <aside id="accessPanel" class="access-panel" hidden aria-label="Accessibility settings">
     <div class="access-head"><strong>Make MARGIN yours</strong><button id="closeAccess" aria-label="Close">×</button></div>
