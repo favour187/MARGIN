@@ -18,9 +18,9 @@
   box-sizing: border-box;
 }
 
-/* Components such as tours, dialogs and conditional download links use the
-   native hidden attribute. This rule prevents component display styles from
-   accidentally keeping a hidden layer interactive. */
+
+
+
 [hidden] {
   display: none !important;
 }

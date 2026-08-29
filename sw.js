@@ -36,8 +36,8 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
-  // Network-first avoids mixing a newly deployed page with an older cached
-  // script. The cache remains the fallback when the user is offline.
+
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {

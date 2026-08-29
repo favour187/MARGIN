@@ -7,7 +7,7 @@ import {
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-// Storage is deliberately versioned so future migrations can be explicit.
+
 const STORE = "margin-state-v1";
 const STATE_SCHEMA = 2;
 const demoWeek = [
@@ -191,8 +191,8 @@ const actions = [
     reason: "You have privacy and enough time for actual recovery.",
   },
 ];
-// Build a useful first-run demo. Dates are tied to the hackathon week so the
-// reviewer can see deadline pressure immediately.
+
+
 function fresh() {
   return {
     schemaVersion: STATE_SCHEMA,
@@ -280,8 +280,8 @@ async function copyText(text) {
     return;
   }
 
-  // Firefox and embedded mobile browsers do not always expose the modern
-  // clipboard API. Keep a small legacy fallback for those environments.
+
+
   const field = document.createElement("textarea");
   field.value = text;
   field.setAttribute("readonly", "");
@@ -359,9 +359,9 @@ $("#menuBtn").addEventListener("click", () => {
 });
 $("#closeMenu").addEventListener("click", closeDrawer);
 $("#menuScrim").addEventListener("click", closeDrawer);
-// ---------------------------------------------------------------------------
-// Today dashboard
-// ---------------------------------------------------------------------------
+
+
+
 function renderDashboard() {
   const results = state.week.map(calc),
     total = results.reduce((s, r) => s + r.margin, 0),
@@ -647,9 +647,9 @@ $("#readInsight").addEventListener("click", () => {
   speechSynthesis.speak(u);
   toast("Reading insight aloud");
 });
-// ---------------------------------------------------------------------------
-// Task inbox and deadline-aware scheduling
-// ---------------------------------------------------------------------------
+
+
+
 function normalizeTask(t) {
   return {
     id: t.id || crypto.randomUUID?.() || String(Date.now() + Math.random()),
@@ -856,9 +856,9 @@ $("#notifyBtn").addEventListener("click", async () => {
     $("#notifyBtn").textContent = "Alerts enabled";
   } else toast("Notification permission was not granted");
 });
-// ---------------------------------------------------------------------------
-// Week Lab: manual scenarios, calendar import and whole-week rescue
-// ---------------------------------------------------------------------------
+
+
+
 function renderWeekLab() {
   const days = state.week;
   $("#dayPicker").innerHTML = days
@@ -1083,9 +1083,9 @@ $("#exportCalendar").addEventListener("click", () => {
   $("#calendarStatus").textContent =
     "Safer week exported. Review times before adding it to your calendar.";
 });
-// ---------------------------------------------------------------------------
-// Reset Lab: a small contextual bandit trained only by explicit feedback
-// ---------------------------------------------------------------------------
+
+
+
 function bindChoice(group, key, attr) {
   $$(`${group} button`).forEach((b) =>
     b.addEventListener("click", () => {
@@ -1198,9 +1198,9 @@ $$("[data-feedback]").forEach((b) =>
     renderRecommendation(true);
   }),
 );
-// ---------------------------------------------------------------------------
-// Support, privacy-preserving sharing and encrypted device transfer
-// ---------------------------------------------------------------------------
+
+
+
 function renderSupport() {
   const s = state.support;
   $("#supportName").value = s.name;
@@ -1586,10 +1586,10 @@ $("#deleteData").addEventListener("click", () => {
     toast("All local MARGIN data deleted");
   }
 });
-// ---------------------------------------------------------------------------
-// First-run tour. It explains the product loop instead of exposing every
-// feature at once.
-// ---------------------------------------------------------------------------
+
+
+
+
 const tourSteps = [
   {
     title: "See what your week can honestly hold.",
@@ -1654,9 +1654,9 @@ $("#tourNext").addEventListener("click", () => {
   localStorage.setItem("margin-tour-seen", "yes");
 });
 
-// ---------------------------------------------------------------------------
-// Calm Now deliberately shows one instruction at a time.
-// ---------------------------------------------------------------------------
+
+
+
 const calmSteps = [
   {
     title: "Nothing else is required for this minute.",

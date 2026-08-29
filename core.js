@@ -1,8 +1,8 @@
-// Core planning rules for MARGIN.
-//
-// These functions are deliberately free of browser APIs. Keeping the model
-// separate from the interface makes it possible to test the scheduling rules
-// without loading the application.
+
+
+
+
+
 
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
 
@@ -11,8 +11,8 @@ export function calculateCapacity(day, recoveryReserve = 2) {
   const availableHours =
     wakingHours - day.fixed - day.care - day.commute - recoveryReserve;
 
-  // Low energy and high stress can make the same task take more effort. This
-  // is an explicit user-controlled adjustment, not a clinical prediction.
+
+
   const friction = 1 + (5 - day.energy) * 0.11 + day.stress * 0.035;
   const adjustedDemand = day.flex * friction;
   const margin = availableHours - adjustedDemand;
@@ -56,8 +56,8 @@ export function buildDeadlinePlan(week, tasks, referenceDate = new Date()) {
     return date;
   });
 
-  // Named tasks replace the generic flexible-work estimate when a plan is
-  // applied, so planning capacity is measured with flex set to zero here.
+
+
   const remainingCapacity = week.map((day) =>
     Math.max(0, calculateCapacity({ ...day, flex: 0 }).margin),
   );
@@ -140,8 +140,8 @@ export function optimiseFlexibleWeek(sourceWeek) {
   const proposedWeek = structuredClone(sourceWeek);
   const moves = [];
 
-  // Move only flexible work, in small blocks, and stop when no receiving day
-  // has enough spare margin. Fixed life and recovery are never altered here.
+
+
   for (let attempt = 0; attempt < 40; attempt += 1) {
     const results = proposedWeek.map(calculateCapacity);
     const source = results
